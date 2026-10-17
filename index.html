@@ -132,6 +132,31 @@ table.dif th,table.dif td{text-align:left;border-bottom:1px solid var(--line);pa
 @media (max-width:560px){.hero{padding:22px 14px 12px}.hero .deco{opacity:.5}.evc svg,.evc .l{display:none}.evrow{grid-template-columns:1fr 1fr;margin:8px auto 2px}.evc{padding:2px 8px}.evc .t{font-size:15px}.evc:nth-child(3){margin-top:4px;padding-top:6px}.hero .tag{margin:6px 0 0}}
 @media (min-width:561px){.hero{padding-bottom:14px}.evc svg{width:24px;height:24px}}
 .tabs{scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
+
+/* Passada de design: labels em minúsculas, totais em faixa única, lista em linhas no desktop */
+.evc .t{white-space:normal}.evc:first-child .t{white-space:nowrap}.evc .l{letter-spacing:.02em;text-transform:none;font-size:14px;font-weight:600}
+.tiles{gap:0;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+.tile{border:0;border-radius:0;background:transparent;border-left:1px solid var(--line);padding:14px 18px}
+.tile:first-child{border-left:0}
+.tile .k{letter-spacing:0;text-transform:none;font-size:13.5px;color:var(--gold);font-weight:700}
+.tile.soft{background:var(--rose-soft)}
+@media (max-width:700px){.tiles{grid-template-columns:1fr 1fr}.tile{border-left:0;border-top:1px solid var(--line)}.tile:nth-child(odd){border-right:1px solid var(--line)}.tile:nth-child(-n+2){border-top:0}.tile .v{font-size:32px}}
+@media (min-width:561px){
+  .hero{padding-top:24px}
+  .evc{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:2px 8px;align-items:center}.evc svg{margin:0}.evc .l{display:none}.evrow{margin:8px auto 2px}}
+@media (min-width:900px){
+  #list.grid{display:block;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+  #list .gcard{display:grid;grid-template-columns:minmax(200px,1.5fr) minmax(180px,1.1fr) 170px 150px auto;grid-template-areas:"nm ch ct st ac" "cm ag ct st ac" "nt nt nt nt nt";align-items:center;column-gap:16px;row-gap:2px;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none;background:transparent;padding:10px 16px}
+  #list .gcard:first-child{border-top:0}#list .gcard:hover{background:var(--bg)}
+  #list .gcard .gtop{grid-area:nm}#list .gcard h3{font-size:21px}
+  #list .gcard .chips{grid-area:ch}#list .gcard .cm{grid-area:cm}#list .gcard .ag{grid-area:ag;font-size:13px}
+  #list .gcard .count{grid-area:ct;font-size:14px;white-space:nowrap}#list .gcard .gnotes{grid-area:nt;border-top:0;padding:0;margin-top:2px;font-size:13px}
+  #list .gcard .gact{grid-area:st/st/st/ac;display:flex;margin:0;padding:0;justify-content:flex-end}
+  #list .gcard .gact select{margin-right:auto}
+  #list .gcard .btn.sm{border-color:transparent;background:transparent;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+  #list .gcard .btn.danger{color:var(--bad)}
+}
+@media (max-width:899px){.gcard{padding:12px 14px}.gcard h3{font-size:20px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -310,8 +335,8 @@ function renderList(){
     if(rev)chips+='<button class="chip warn" type="button" data-go="revisoes" style="border:0;cursor:pointer">'+rev+' a revisar</button>';
     if(dupIds[g.id])chips+='<button class="chip bad" type="button" data-go="duplicidades" style="border:0;cursor:pointer">Possível duplicidade</button>';
     return '<article class="gcard" data-id="'+esc(g.id)+'"><div class="gtop"><h3>'+esc(g.name)+'</h3></div><div class="chips">'+chips+'</div>'
-      +(g.companions?'<p class="comp">com '+esc(g.companions)+'</p>':'')+'<p class="count">'+peopleText(g)+'</p>'
-      +(g.ages?'<p class="comp">Idades: '+esc(g.ages)+'</p>':'')+(g.notes?'<p class="gnotes">'+esc(g.notes)+'</p>':'')
+      +(g.companions?'<p class="comp cm">com '+esc(g.companions)+'</p>':'')+'<p class="count">'+peopleText(g)+'</p>'
+      +(g.ages?'<p class="comp ag">Idades: '+esc(g.ages)+'</p>':'')+(g.notes?'<p class="gnotes">'+esc(g.notes)+'</p>':'')
       +'<div class="gact"><select class="stsel needw st-'+slugSt(g.status)+'" data-id="'+esc(g.id)+'" aria-label="Status de '+esc(g.name)+'">'+STATUS.map(function(s){return '<option value="'+s[0]+'"'+(s[0]===g.status?' selected':'')+'>'+s[1]+'</option>'}).join('')+'</select>'
       +'<span class="chip st-'+slugSt(g.status)+'" aria-hidden="true" style="display:none">'+esc(labelSt(g.status))+'</span>'
       +'<button class="btn sm needw" type="button" data-act="edit" data-id="'+esc(g.id)+'">Editar</button><button class="btn sm danger needw" type="button" data-act="del" data-id="'+esc(g.id)+'">Excluir</button></div></article>'}).join('')}
