@@ -109,6 +109,7 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-b
 .hist ul{margin:6px 0 0;padding-left:18px;color:var(--ink);font-size:13.5px;overflow-wrap:anywhere}
 .hist .aut{font-size:12px;color:var(--muted)}
 footer.foot{margin-top:30px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;max-width:80ch}
+[hidden]{display:none!important}
 .overlay{position:fixed;inset:0;background:rgba(40,20,32,.55);display:flex;align-items:flex-start;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-y:auto;z-index:20}
 .dialog{background:var(--surface);color:var(--ink);border-radius:16px;border:1px solid var(--line);width:100%;max-width:560px;padding:18px;margin:auto;box-shadow:var(--shadow)}
 .dialog h2{font-size:28px;color:var(--rose-ink);margin-bottom:6px}
@@ -128,6 +129,9 @@ table.dif th,table.dif td{text-align:left;border-bottom:1px solid var(--line);pa
   .toolbar{grid-template-columns:1fr 1fr}.toolbar .search{grid-column:1/-1}
   .pair{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}
 }
+@media (max-width:560px){.hero{padding:22px 14px 12px}.hero .deco{opacity:.5}.evc svg,.evc .l{display:none}.evrow{grid-template-columns:1fr 1fr;margin:8px auto 2px}.evc{padding:2px 8px}.evc .t{font-size:15px}.evc:nth-child(3){margin-top:4px;padding-top:6px}.hero .tag{margin:6px 0 0}}
+@media (min-width:561px){.hero{padding-bottom:14px}.evc svg{width:24px;height:24px}}
+.tabs{scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -199,7 +203,7 @@ var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){r
 var norm=function(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase()};
 var STATUS=[['a convidar','A convidar','todo'],['convidado','Convidado','sent'],['confirmado','Confirmado','yes'],['recusado','Recusado','no'],['talvez','Talvez','maybe']];
 var ALC=[['sim','Consome álcool'],['não','Não consome'],['misto','Misto'],['a confirmar','Álcool a confirmar']];
-var FIELDS=[['name','Nome'],['origin','Origem'],['companions','Acompanhantes'],['adults','Adultos'],['children','Crianças/adolescentes'],['ages','Idades'],['alcohol','Álcool'],['status','Status'],['possible','Possível convidado'],['notes','Observações']];
+var FIELDS=[['name','Nome'],['origin','Origem'],['companions','Acompanhantes'],['adults','Adultos'],['children','Crianças/adolescentes'],['ages','Idades'],['alcohol','Álcool'],['status','Status'],['possible','Possível convidado'],['plusOne','+1 com nome pendente'],['notes','Observações']];
 var RELS=['Andressa','Sidney','Familiar da Andressa','Familiar do Sidney'];
 var STOP=new Set(['e','da','de','do','das','dos','vo','mais','convidado','convidados','marido','esposa','filha','filho','filhas','filhos','namorado','namorada','nenhum','tia','tio','dona','duas','dois','adulto','informado']);
 var EVENT=new Date(2026,10,8);
@@ -249,7 +253,7 @@ function needMe(cb){if(S.me)return true;S.pending=cb;openIdentity();return false
 async function logHistory(e){
   try{await S.db.collection('history').add({ts:new Date().toISOString(),who:S.me.name,relation:S.me.relation,action:e.action,groupId:e.groupId||'',groupName:e.groupName||'',details:e.details||[],note:'Identidade autodeclarada, não verificada.'})}
   catch(err){toast('Alteração salva, mas o histórico falhou. Avise o Sidney.')}}
-function writeFail(err){if(err&&err.code==='invalid_argument'){S.canWrite=false;renderAll();toast('Seu acesso é só de leitura. Peça permissão de edição ao Sidney.')}else toast('Não foi possível salvar. Tente de novo.')}
+function writeFail(err){if(err&&err.code==='invalid_argument'){S.canWrite=false;renderAll();toast('Seu acesso é só de leitura. Peça permissão de edição ao Sidney.')}else if(err&&err.code==='conflict'){closeModal();toast('Outra pessoa salvou este grupo ao mesmo tempo. A lista foi atualizada: abra o grupo e refaça a alteração.')}else toast('Não foi possível salvar. Verifique a conexão e tente de novo.')}
 async function commitGroup(id,baseVersion,next,action){
   var ref=S.db.doc('groups/'+id),snap=await ref.get(),cur=snap.exists?snap.data():null;
   if(baseVersion!=null&&!cur)return {gone:true};
@@ -301,6 +305,7 @@ function renderList(){
     var rev=reviewsFor(g).filter(function(r){return !S.reviews[g.id+'__'+r.key]}).length,chips='';
     chips+='<span class="chip '+(g.origin==='Andressa'?'o-a':'o-s')+'">'+esc(g.origin)+'</span>';
     chips+='<span class="chip'+(g.alcohol==='sim'?' gold':'')+'">'+esc((ALC.filter(function(a){return a[0]===g.alcohol})[0]||['',g.alcohol])[1])+'</span>';
+    if(g.plusOne)chips+='<span class="chip warn">+1 com nome pendente</span>';
     if(g.possible)chips+='<span class="chip warn">Possível convidado</span>';
     if(rev)chips+='<button class="chip warn" type="button" data-go="revisoes" style="border:0;cursor:pointer">'+rev+' a revisar</button>';
     if(dupIds[g.id])chips+='<button class="chip bad" type="button" data-go="duplicidades" style="border:0;cursor:pointer">Possível duplicidade</button>';
@@ -354,7 +359,7 @@ function closeModal(){$('#overlay').hidden=true;$('#modalBody').innerHTML='';S.f
 function openIdentity(){
   var cur=S.me||{name:'',relation:''},isCustom=cur.relation&&RELS.indexOf(cur.relation)<0;
   openModal('<h2>Quem está acessando?</h2><p class="note" style="margin-top:0">Informe seu nome e sua relação com a família. Isso aparece no histórico das alterações. É autodeclarado: o site não verifica a identidade.</p><form id="idForm"><label class="f" for="idName">Seu nome</label><input type="text" id="idName" maxlength="60" value="'+esc(cur.name)+'" required autocomplete="name"><div style="height:10px"></div><label class="f" for="idRel">Relação com a família</label><select id="idRel"><option value=""'+(cur.relation?'':' selected')+'>Escolha…</option>'+RELS.map(function(r){return '<option'+(cur.relation===r?' selected':'')+'>'+esc(r)+'</option>'}).join('')+'</select><div id="idCustomWrap" style="margin-top:8px"'+(isCustom?'':' hidden')+'><label class="f" for="idCustom">Qual relação?</label><input type="text" id="idCustom" maxlength="40" value="'+(isCustom?esc(cur.relation):'')+'"></div><div class="err" id="idErr" role="alert"></div><div class="dact">'+(S.me?'<button class="btn" type="button" data-m="close">Cancelar</button>':'')+'<button class="btn primary" type="submit">Continuar</button></div></form>')}
-function formHtml(g){g=g||{name:'',origin:'Andressa',companions:'',adults:1,children:0,ages:'',alcohol:'a confirmar',status:'a convidar',notes:'',possible:false};
+function formHtml(g){g=g||{name:'',origin:'Andressa',companions:'',adults:1,children:0,ages:'',alcohol:'a confirmar',status:'a convidar',notes:'',possible:false,plusOne:false};
   var num=function(id,v){return '<div class="numrow"><input type="number" id="'+id+'" min="0" max="40" inputmode="numeric" value="'+(v==null?'':v)+'"'+(v==null?' disabled':'')+'><label class="chk"><input type="checkbox" id="'+id+'Tbd"'+(v==null?' checked':'')+'> a confirmar</label></div>'};
   return '<h2>'+(S.form&&S.form.id?'Editar grupo':'Novo grupo')+'</h2><form id="gForm"><div class="fgrid">'
   +'<div class="full"><label class="f" for="fName">Nome do grupo</label><input type="text" id="fName" maxlength="80" required value="'+esc(g.name)+'"></div>'
@@ -365,12 +370,13 @@ function formHtml(g){g=g||{name:'',origin:'Andressa',companions:'',adults:1,chil
   +'<div class="full"><label class="f" for="fAges">Idades aproximadas</label><input type="text" id="fAges" maxlength="160" value="'+esc(g.ages)+'" placeholder="Ex.: Sophia, 8 anos"></div>'
   +'<div><label class="f" for="fAlc">Consumo de álcool</label><select id="fAlc">'+ALC.map(function(a){return '<option value="'+a[0]+'"'+(a[0]===g.alcohol?' selected':'')+'>'+a[1]+'</option>'}).join('')+'</select></div>'
   +'<div style="align-self:end"><label class="chk"><input type="checkbox" id="fPoss"'+(g.possible?' checked':'')+'> Possível convidado</label></div>'
+  +'<div class="full"><label class="chk"><input type="checkbox" id="fPlus"'+(g.plusOne?' checked':'')+'> Tem +1 (já contado como adulto; o nome será informado na confirmação)</label></div>'
   +'<div class="full"><label class="f" for="fNotes">Observações</label><textarea id="fNotes" maxlength="500">'+esc(g.notes)+'</textarea></div></div><div class="err" id="fErr" role="alert"></div>'
   +'<div class="dact"><button class="btn" type="button" data-m="close">Cancelar</button><button class="btn primary" type="submit">Salvar</button></div></form>'}
 function openForm(id){if(!canDo())return;var g=id?byId(id):null;S.form={id:id||null,base:g?g.version:null};openModal(formHtml(g))}
 function readForm(){var n=$('#fName').value.trim();if(!n){$('#fErr').textContent='Informe o nome do grupo.';return null}
   var rd=function(id){if($('#'+id+'Tbd').checked)return null;var v=$('#'+id).value;if(v==='')return 0;var x=parseInt(v,10);return isNaN(x)||x<0?0:x};
-  return {name:n,origin:$('#fOrigin').value,companions:$('#fComp').value.trim(),adults:rd('fAdults'),children:rd('fChildren'),ages:$('#fAges').value.trim(),alcohol:$('#fAlc').value,status:$('#fStatus').value,possible:$('#fPoss').checked,notes:$('#fNotes').value.trim()}}
+  return {name:n,origin:$('#fOrigin').value,companions:$('#fComp').value.trim(),adults:rd('fAdults'),children:rd('fChildren'),ages:$('#fAges').value.trim(),alcohol:$('#fAlc').value,status:$('#fStatus').value,possible:$('#fPoss').checked,plusOne:$('#fPlus').checked,notes:$('#fNotes').value.trim()}}
 function openConflict(id,mine,action,okMsg,res){
   if(res&&res.gone){openModal('<h2>Grupo não encontrado</h2><p>Outra pessoa excluiu este grupo definitivamente enquanto você editava. Nada foi salvo.</p><div class="dact"><button class="btn primary" type="button" data-m="close">Entendi</button></div>');return}
   var cur=res.conflict;S.conflict={id:id,mine:mine,action:action,okMsg:okMsg,cur:cur};
