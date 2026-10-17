@@ -1,0 +1,480 @@
+<title>Convidados da Aurora</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Figtree:wght@400;500;600;700&family=Pinyon+Script&display=swap">
+<style>
+/* Visual claro e rosado de propósito, em qualquer tema do aparelho. */
+/* Layout: faixa de cabeçalho com detalhes do evento, abas, painel de totais e cartões de grupos em grade. */
+:root{
+  --bg:#FDEFF2; --surface:#FFF9FA; --surface2:#FADFE6; --ink:#46313C; --muted:#745C66; --line:#F1D3DB; color-scheme:light;
+  --rose:#C86A8A; --rose-ink:#9C3F62; --on-rose:#FFFFFF; --rose-soft:#F6D9E2;
+  --lilac:#E4DAF5; --lilac-ink:#55428A; --gold:#8F6A3E; --gold-soft:#F1E3D0; --sage:#5F7A52; --sage-soft:#E3EBDA;
+  --ok:#2F7452; --ok-soft:#DCEFE3; --warn:#7F560C; --warn-soft:#F6E8C8; --bad:#A33A4B; --bad-soft:#F7DADF;
+  --focus:#6C4BBA; --shadow:0 1px 2px rgba(90,40,60,.08),0 6px 18px rgba(90,40,60,.06);
+  --display:'Cormorant Garamond',Georgia,serif; --body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0;line-height:1.15}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+.rg{height:5px;background:linear-gradient(90deg,#E9B8BC,#C98F7F 50%,#E9B8BC);margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));}
+/* Jardim encantado: arco do convite, monograma bordado, borboletas, rosas e balões pastel */
+.hero{position:relative;text-align:center;background:linear-gradient(180deg,var(--surface),var(--bg));border:1px solid var(--line);border-top-left-radius:min(240px,42vw);border-top-right-radius:min(240px,42vw);border-bottom-left-radius:24px;border-bottom-right-radius:24px;margin-top:16px;padding:30px 18px 18px;overflow:hidden}
+.hero>*{position:relative;z-index:1}
+.hero .deco{position:absolute;z-index:0;pointer-events:none}
+.balloons{left:-14px;top:-10px;width:clamp(84px,17vw,160px)}
+.vine{right:0;top:0;width:clamp(60px,13vw,120px)}
+.hero h1{display:flex;flex-direction:column;align-items:center;margin:0}
+.hero .eyebrow{font-family:var(--display);font-weight:600;font-size:clamp(13px,3vw,19px);letter-spacing:.34em;text-transform:uppercase;color:var(--gold);padding-left:.34em}
+.mono{position:relative;display:inline-block;line-height:1;margin-top:2px}
+.mono .A{display:block;font-family:var(--display);font-weight:700;font-size:clamp(120px,26vw,184px);line-height:.86;background:repeating-linear-gradient(135deg,#D2B58B 0 3px,#B9945F 3px 6px);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mono .name{position:absolute;left:50%;top:56%;transform:translate(-50%,-50%);font-family:'Pinyon Script','Great Vibes',cursive;font-weight:400;font-size:clamp(52px,12vw,90px);color:var(--rose-ink);white-space:nowrap;text-shadow:0 0 8px var(--surface),0 0 3px var(--surface),0 0 2px var(--surface)}
+.mono .bf{position:absolute;width:clamp(48px,11vw,92px);height:auto;overflow:visible}
+.mono .bf1{left:calc(-1 * clamp(56px,13vw,112px));top:6%;transform:rotate(-8deg)}
+.mono .bf2{right:calc(-1 * clamp(60px,14vw,120px));top:-2%;width:clamp(56px,13vw,108px);transform:rotate(10deg)}
+.mono .bf3{right:calc(-1 * clamp(40px,10vw,90px));top:62%;width:clamp(34px,7vw,58px);transform:rotate(-6deg)}
+.garland{display:block;width:min(290px,72%);height:auto;margin:6px auto 2px}
+.tag{margin:6px 0 0;font-family:var(--display);font-size:clamp(17px,3.6vw,22px);color:var(--muted);font-weight:600}
+.count{}
+.evrow{display:grid;grid-template-columns:1fr 1fr 1.7fr;max-width:740px;margin:14px auto 6px}
+.evc{padding:4px 14px;border-left:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}
+.evc:first-child{border-left:0}
+.evc svg{width:30px;height:30px;stroke:var(--rose);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-bottom:2px}
+.evc .l{font-family:var(--display);letter-spacing:.22em;text-transform:uppercase;font-size:13px;color:var(--gold);font-weight:700}
+.evc .t{font-family:var(--display);font-size:clamp(16px,3.4vw,19px);color:var(--ink);font-weight:600;line-height:1.25;overflow-wrap:anywhere}
+.hero .hactions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+.hero .cd{font-size:13px;color:var(--muted);margin:4px 0 0}
+@media (max-width:560px){.evrow{grid-template-columns:1fr 1fr}.evc:nth-child(3){grid-column:1/-1;border-left:0;border-top:1px solid var(--line);margin-top:8px;padding-top:10px}}
+.me{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;color:var(--muted);padding-bottom:10px}
+.me b{color:var(--ink);font-weight:600}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:40px}
+.btn:hover{border-color:var(--rose)}
+.btn.primary{background:var(--rose-ink);color:var(--on-rose);border-color:var(--rose-ink)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.sm{padding:5px 10px;min-height:34px;font-size:13px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.link{background:none;border:0;color:var(--rose-ink);text-decoration:underline;cursor:pointer;padding:0;font-size:inherit}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:18px}
+nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;cursor:pointer;color:var(--muted);font-weight:600;white-space:nowrap;display:flex;gap:6px;align-items:center}
+nav.tabs button[aria-selected="true"]{color:var(--rose-ink);border-bottom-color:var(--rose)}
+.badge{background:var(--lilac);color:var(--lilac-ink);border-radius:999px;font-size:12px;padding:1px 8px;font-variant-numeric:tabular-nums}
+.banner{background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn);border-radius:12px;padding:10px 14px;margin-bottom:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:8px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-width:0}
+.tile .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.tile .v{font-family:var(--display);font-size:38px;font-weight:700;color:var(--rose-ink);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .s{font-size:12.5px;color:var(--muted)}
+.tile.soft{background:var(--surface2)}
+.note{font-size:13px;color:var(--muted);margin:6px 0 16px}
+.toolbar{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.toolbar .row2{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+input[type=text],input[type=search],input[type=number],input[type=url],select,textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-height:40px}
+textarea{min-height:76px;resize:vertical}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.gcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0;box-shadow:var(--shadow)}
+.gtop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.gcard h3{font-size:22px;overflow-wrap:anywhere}
+.gcard p{margin:0;overflow-wrap:anywhere}
+.comp{color:var(--muted);font-size:14px}
+.count{font-weight:600;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{display:inline-flex;align-items:center;border-radius:999px;font-size:12px;font-weight:600;padding:2px 9px;background:var(--surface2);color:var(--muted);white-space:nowrap}
+.chip.o-a{background:var(--rose-soft);color:var(--rose-ink)}
+.chip.o-s{background:var(--lilac);color:var(--lilac-ink)}
+.chip.gold{background:var(--gold-soft);color:var(--gold)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.gnotes{font-size:13.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px}
+.gact{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:8px}
+.gact select{width:auto;min-height:34px;padding:4px 8px;font-size:13px;font-weight:600}
+.st-todo{background:var(--surface2)} .st-sent{background:var(--lilac);color:var(--lilac-ink)} .st-yes{background:var(--ok-soft);color:var(--ok)} .st-no{background:var(--bad-soft);color:var(--bad)} .st-maybe{background:var(--warn-soft);color:var(--warn)}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:28px;text-align:center;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;min-width:0}
+.panel h3{font-size:21px;margin-bottom:6px}
+.rv-item{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.rv-item:first-of-type{border-top:0}
+.rv-item span.t{flex:1 1 260px;min-width:0}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0}
+.mini{background:var(--surface2);border-radius:10px;padding:10px;min-width:0;overflow-wrap:anywhere}
+.hist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.hist li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.hist .hh{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13.5px}
+.hist time{color:var(--muted);font-variant-numeric:tabular-nums}
+.hist ul{margin:6px 0 0;padding-left:18px;color:var(--ink);font-size:13.5px;overflow-wrap:anywhere}
+.hist .aut{font-size:12px;color:var(--muted)}
+footer.foot{margin-top:30px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;max-width:80ch}
+.overlay{position:fixed;inset:0;background:rgba(40,20,32,.55);display:flex;align-items:flex-start;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-y:auto;z-index:20}
+.dialog{background:var(--surface);color:var(--ink);border-radius:16px;border:1px solid var(--line);width:100%;max-width:560px;padding:18px;margin:auto;box-shadow:var(--shadow)}
+.dialog h2{font-size:28px;color:var(--rose-ink);margin-bottom:6px}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.fgrid .full{grid-column:1/-1}
+.numrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numrow input[type=number]{width:90px}
+.chk{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--ink)}
+.chk input{width:18px;height:18px;accent-color:var(--rose-ink)}
+.dact{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:14px}
+.err{color:var(--bad);font-size:13px;margin-top:6px}
+table.dif{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+table.dif th,table.dif td{text-align:left;border-bottom:1px solid var(--line);padding:5px 6px;vertical-align:top;overflow-wrap:anywhere}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(16px,env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;z-index:30;max-width:90vw;font-size:14px}
+.ro .needw{display:none!important}
+@media (max-width:720px){
+  .toolbar{grid-template-columns:1fr 1fr}.toolbar .search{grid-column:1/-1}
+  .pair{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="rg" aria-hidden="true"></div>
+<div class="wrap" id="app">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+    <symbol id="bf" viewBox="0 0 100 80"><g fill="var(--rose-soft)" stroke="var(--rose)" stroke-width="1.8" stroke-linejoin="round" stroke-dasharray="4 2.5"><path d="M48 38C44 12 14 2 8 22 4 38 26 48 48 41Z"/><path d="M48 44C34 46 18 56 24 70 30 78 44 66 48 48Z"/><g transform="translate(100 0) scale(-1 1)"><path d="M48 38C44 12 14 2 8 22 4 38 26 48 48 41Z"/><path d="M48 44C34 46 18 56 24 70 30 78 44 66 48 48Z"/></g></g><path d="M50 30V62" stroke="var(--gold)" stroke-width="3.5" stroke-linecap="round"/><path d="M50 30C47 20 43 15 38 13M50 30C53 20 57 15 62 13" fill="none" stroke="var(--gold)" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="rose" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="var(--rose-soft)" stroke="var(--rose)" stroke-width="1.6"/><path d="M20 20m-2.5 0a2.5 2.5 0 1 1 5 0a5 5 0 1 1-10 0a8 8 0 1 1 16 0a11 11 0 0 1-11 11" fill="none" stroke="var(--rose)" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="leaf" viewBox="0 0 30 16"><path d="M1 8C8-2 22-2 29 8 22 18 8 18 1 8Z" fill="var(--sage-soft)" stroke="var(--sage)" stroke-width="1.4"/><path d="M3 8H27" stroke="var(--sage)" stroke-width="1.2"/></symbol>
+    <symbol id="daisy" viewBox="0 0 24 24"><g fill="var(--surface)" stroke="var(--line)" stroke-width="1.2"><circle cx="19" cy="12" r="4.6"/><circle cx="15.5" cy="18.1" r="4.6"/><circle cx="8.5" cy="18.1" r="4.6"/><circle cx="5" cy="12" r="4.6"/><circle cx="8.5" cy="5.9" r="4.6"/><circle cx="15.5" cy="5.9" r="4.6"/></g><circle cx="12" cy="12" r="3" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="1.2"/></symbol>
+  </defs></svg>
+  <header class="hero">
+    <svg class="deco balloons" viewBox="0 0 170 190" aria-hidden="true"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F0C4B6"/><stop offset="1" stop-color="#C98A7A"/></linearGradient></defs><circle cx="54" cy="44" r="40" fill="#D9CAEF"/><circle cx="112" cy="26" r="26" fill="#F4CBD6"/><circle cx="30" cy="108" r="32" fill="#F1BFCC"/><circle cx="90" cy="96" r="30" fill="#F5E8D8"/><circle cx="52" cy="164" r="24" fill="#D9CAEF"/><circle cx="108" cy="150" r="15" fill="url(#rg)"/><circle cx="14" cy="48" r="13" fill="url(#rg)"/><g fill="#fff" opacity=".45"><ellipse cx="42" cy="30" rx="9" ry="5"/><ellipse cx="104" cy="18" rx="6" ry="3.5"/><ellipse cx="22" cy="95" rx="8" ry="4.5"/><ellipse cx="82" cy="84" rx="7" ry="4"/></g></svg>
+    <svg class="deco vine" viewBox="0 0 130 200" aria-hidden="true"><path d="M104 0C96 40 118 70 100 112 90 142 106 172 96 200" fill="none" stroke="var(--sage)" stroke-width="1.6"/><use href="#leaf" x="82" y="24" width="26" height="14" transform="rotate(-30 95 31)"/><use href="#leaf" x="106" y="46" width="26" height="14" transform="rotate(25 119 53)"/><use href="#leaf" x="84" y="82" width="26" height="14" transform="rotate(-20 97 89)"/><use href="#leaf" x="104" y="116" width="26" height="14" transform="rotate(30 117 123)"/><use href="#leaf" x="80" y="150" width="26" height="14" transform="rotate(-25 93 157)"/><use href="#rose" x="76" y="62" width="18" height="18"/><circle cx="60" cy="40" r="2.4" fill="#E9CE95"/><circle cx="70" cy="118" r="2.4" fill="#E9CE95"/><circle cx="58" cy="168" r="2.4" fill="#E9CE95"/><circle cx="118" cy="90" r="2.4" fill="#E9CE95"/></svg>
+    <h1><span class="eyebrow">Chá de Bebê da</span>
+      <span class="mono"><span class="A" aria-hidden="true">A</span><span class="name">Aurora</span>
+        <svg class="bf bf1" viewBox="0 0 100 80" aria-hidden="true"><use href="#bf"/></svg><svg class="bf bf2" viewBox="0 0 100 80" aria-hidden="true"><use href="#bf"/></svg><svg class="bf bf3" viewBox="0 0 100 80" aria-hidden="true"><use href="#bf"/></svg></span></h1>
+    <svg class="garland" viewBox="0 0 300 46" aria-hidden="true"><use href="#leaf" x="38" y="22" width="34" height="18" transform="rotate(-18 55 31)"/><use href="#leaf" x="228" y="22" width="34" height="18" transform="rotate(18 245 31)"/><use href="#daisy" x="70" y="14" width="24" height="24"/><use href="#daisy" x="206" y="14" width="24" height="24"/><use href="#rose" x="96" y="8" width="32" height="32"/><use href="#rose" x="172" y="8" width="32" height="32"/><use href="#rose" x="128" y="2" width="44" height="44"/></svg>
+    <p class="tag">Lista de convidados · Jardim Encantado</p>
+    <div class="evrow">
+      <div class="evc"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="7" width="24" height="21" rx="4"/><path d="M4 13h24M10 4v6M22 4v6"/><path d="M16 25c-3-2-4.5-3.3-4.5-5a2.4 2.4 0 0 1 4.5-1 2.4 2.4 0 0 1 4.5 1c0 1.7-1.5 3-4.5 5z"/></svg><span class="l">Data</span><span class="t">08 de novembro de 2026</span></div>
+      <div class="evc"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12"/><path d="M16 9v7l5 3"/></svg><span class="l">Horário</span><span class="t">13h</span></div>
+      <div class="evc"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 29s9-8.5 9-15a9 9 0 0 0-18 0c0 6.5 9 15 9 15z"/><circle cx="16" cy="14" r="3.5"/></svg><span class="l">Local</span><span class="t">Alameda Sabiá, 51 · Condomínio Chácara da Lagoa · Itapecerica da Serra/SP</span></div>
+    </div>
+    <p class="cd" id="eventLine"></p>
+    <div class="hactions" id="hActions"></div>
+  </header>
+  <div class="me" id="meLine"></div>
+  <div id="banner"></div>
+  <nav class="tabs" role="tablist" aria-label="Seções" id="tabs"></nav>
+
+  <section id="pane-convidados" role="tabpanel">
+    <div class="tiles" id="tiles"></div>
+    <p class="note" id="tilesNote"></p>
+    <div class="toolbar">
+      <div class="search"><label class="f" for="q">Buscar por nome</label><input type="search" id="q" placeholder="Nome, acompanhante ou observação" autocomplete="off"></div>
+      <div><label class="f" for="fo">Origem</label><select id="fo"><option value="">Todas</option><option>Andressa</option><option>Sidney Jr.</option></select></div>
+      <div><label class="f" for="fs">Status</label><select id="fs"><option value="">Todos</option><option value="a convidar">A convidar</option><option value="convidado">Convidado</option><option value="confirmado">Confirmado</option><option value="recusado">Recusado</option><option value="talvez">Talvez</option></select></div>
+      <div><label class="f" for="fa">Álcool</label><select id="fa"><option value="">Todos</option><option value="sim">Consome</option><option value="não">Não consome</option><option value="misto">Misto</option><option value="a confirmar">A confirmar</option></select></div>
+      <div class="row2">
+        <button class="btn primary needw" id="addBtn" type="button">+ Novo grupo</button>
+        <button class="btn" id="csvBtn" type="button">Exportar CSV</button>
+        <button class="btn sm" id="clearF" type="button" hidden>Limpar filtros</button>
+        <span class="note" id="countNote" style="margin:0"></span>
+      </div>
+    </div>
+    <div class="grid" id="list"><div class="empty">Carregando os convidados…</div></div>
+  </section>
+
+  <section id="pane-revisoes" role="tabpanel" hidden></section>
+  <section id="pane-duplicidades" role="tabpanel" hidden></section>
+  <section id="pane-historico" role="tabpanel" hidden></section>
+  <section id="pane-lixeira" role="tabpanel" hidden></section>
+  <section id="pane-ajustes" role="tabpanel" hidden></section>
+
+  <footer class="foot"><svg viewBox="0 0 300 46" aria-hidden="true" style="width:150px;display:block;margin:0 0 8px"><use href="#leaf" x="38" y="22" width="34" height="18" transform="rotate(-18 55 31)"/><use href="#leaf" x="228" y="22" width="34" height="18" transform="rotate(18 245 31)"/><use href="#rose" x="96" y="8" width="32" height="32"/><use href="#rose" x="172" y="8" width="32" height="32"/><use href="#daisy" x="128" y="12" width="44" height="30"/></svg>
+    Quem entra informa o próprio nome e a relação com a família. Essa identificação é autodeclarada e não é verificada. A lista tem nomes, idades de crianças e consumo de álcool de terceiros: compartilhe o link só com quem precisa.
+  </footer>
+</div>
+
+<div class="overlay" id="overlay" hidden><div class="dialog" role="dialog" aria-modal="true" id="modalBody"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var norm=function(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase()};
+var STATUS=[['a convidar','A convidar','todo'],['convidado','Convidado','sent'],['confirmado','Confirmado','yes'],['recusado','Recusado','no'],['talvez','Talvez','maybe']];
+var ALC=[['sim','Consome álcool'],['não','Não consome'],['misto','Misto'],['a confirmar','Álcool a confirmar']];
+var FIELDS=[['name','Nome'],['origin','Origem'],['companions','Acompanhantes'],['adults','Adultos'],['children','Crianças/adolescentes'],['ages','Idades'],['alcohol','Álcool'],['status','Status'],['possible','Possível convidado'],['notes','Observações']];
+var RELS=['Andressa','Sidney','Familiar da Andressa','Familiar do Sidney'];
+var STOP=new Set(['e','da','de','do','das','dos','vo','mais','convidado','convidados','marido','esposa','filha','filho','filhas','filhos','namorado','namorada','nenhum','tia','tio','dona','duas','dois','adulto','informado']);
+var EVENT=new Date(2026,10,8);
+
+var S={db:null,dl:null,canWrite:null,me:loadMe(),groups:[],history:[],reviews:{},dups:{},config:{},baseline:null,loaded:{},tab:'convidados',showWeak:false,form:null,pending:null,F:{q:'',origin:'',status:'',alcohol:''}};
+
+function loadMe(){try{var j=JSON.parse(localStorage.getItem('aurora.me')||'null');if(j&&j.name&&j.relation&&RELS.indexOf(j.relation)>=0)return j}catch(e){}return null}
+function saveMe(m){try{localStorage.setItem('aurora.me',JSON.stringify(m))}catch(e){}}
+function toast(msg){var t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},3800)}
+function fmtTime(ts){try{return new Date(ts).toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',dateStyle:'short',timeStyle:'short'})}catch(e){return ts||''}}
+function fmt(v){if(v==null)return 'a confirmar';if(v===true)return 'sim';if(v===false)return 'não';if(v==='')return '(vazio)';return String(v)}
+function diff(a,b){var out=[];FIELDS.forEach(function(f){var k=f[0],x=a?a[k]:undefined,y=b[k];if(!a){if(y!==''&&y!=null&&y!==false)out.push({campo:f[1],de:'',para:fmt(y)})}else if(x!==y)out.push({campo:f[1],de:fmt(x),para:fmt(y)})});return out}
+function slugSt(s){var r=STATUS.filter(function(x){return x[0]===s})[0];return r?r[2]:'todo'}
+function labelSt(s){var r=STATUS.filter(function(x){return x[0]===s})[0];return r?r[1]:s}
+function live(){return S.groups.filter(function(g){return !g.archived})}
+function trash(){return S.groups.filter(function(g){return g.archived})}
+function byId(id){return S.groups.filter(function(g){return g.id===id})[0]}
+function totals(list){var t={groups:list.length,adults:0,children:0,pend:0,conf:0,confP:0,byO:{}};list.forEach(function(g){if(g.adults!=null)t.adults+=g.adults;if(g.children!=null)t.children+=g.children;if(g.adults==null||g.children==null)t.pend++;if(g.status==='confirmado'){t.conf++;t.confP+=(g.adults||0)+(g.children||0)}t.byO[g.origin]=(t.byO[g.origin]||0)+1});t.people=t.adults+t.children;return t}
+function filtered(){var q=norm(S.F.q);return live().filter(function(g){if(S.F.origin&&g.origin!==S.F.origin)return false;if(S.F.status&&g.status!==S.F.status)return false;if(S.F.alcohol&&g.alcohol!==S.F.alcohol)return false;if(q&&norm([g.name,g.companions,g.notes,g.ages].join(' ')).indexOf(q)<0)return false;return true}).sort(function(a,b){return a.name.localeCompare(b.name,'pt-BR')})}
+function filtersOn(){return !!(S.F.q||S.F.origin||S.F.status||S.F.alcohol)}
+
+/* ---------- revisões e duplicidades (calculadas a partir dos dados) ---------- */
+function reviewsFor(g){var out=[];
+  if(g.adults===1&&g.children===0&&g.alcohol==='misto')out.push({key:'single-misto',text:'Grupo de uma pessoa marcado como "misto". Confirmar o consumo de álcool.'});
+  if(g.adults==null||g.children==null){out.push({key:'pending-count',text:g.adults==null&&g.children==null?'Adultos e crianças/adolescentes ainda a confirmar.':(g.adults==null?'Número de adultos ainda a confirmar.':'Número de crianças/adolescentes não preenchido.')})}
+  if(/mais\s+\d+\s+convidado/i.test(g.companions||''))out.push({key:'generic-comp',text:'Acompanhante sem nome nem parentesco. Está contado como adulto; confirmar quando souberem quem vem.'});
+  if(/\b(1[89]|[2-9]\d)\s*anos/.test(g.ages||''))out.push({key:'adult-age',text:'Há uma idade de adulto no campo de idades das crianças.'});
+  (g.reviewNotes||[]).forEach(function(r){out.push({key:'note-'+r.key,text:r.text})});
+  return out}
+function allReviews(){var out=[];live().forEach(function(g){reviewsFor(g).forEach(function(r){var k=g.id+'__'+r.key;out.push({gk:k,g:g,key:r.key,text:r.text,done:S.reviews[k]||null})})});return out}
+function tokensOf(s){var seen={};return norm(s).split(/[^a-z]+/).filter(function(t){if(t.length<3||STOP.has(t)||seen[t])return false;seen[t]=1;return true})}
+function dupPairs(){var L=live(),info=L.map(function(g){return {g:g,nt:tokensOf(g.name),ct:tokensOf(g.companions||'')}}),freq={};
+  info.forEach(function(x){var u={};x.nt.concat(x.ct).forEach(function(t){u[t]=1});Object.keys(u).forEach(function(t){freq[t]=(freq[t]||0)+1})});
+  var ok=function(t){return freq[t]<=3},res=[];
+  for(var i=0;i<info.length;i++)for(var j=i+1;j<info.length;j++){var A=info[i],B=info[j],tA=A.nt.concat(A.ct),tB=B.nt.concat(B.ct);
+    var strong=A.ct.filter(function(t){return ok(t)&&tB.indexOf(t)>=0}).concat(B.ct.filter(function(t){return ok(t)&&tA.indexOf(t)>=0}));
+    var weak=A.nt.filter(function(t){return ok(t)&&B.nt.indexOf(t)>=0});
+    var toks=(strong.length?strong:weak).filter(function(t,k,a){return a.indexOf(t)===k});
+    if(!toks.length)continue;
+    var key=[A.g.id,B.g.id].sort().join('__');
+    res.push({key:key,a:A.g,b:B.g,level:strong.length?'alta':'baixa',toks:toks,done:S.dups[key]||null})}
+  return res}
+
+/* ---------- escrita no banco ---------- */
+function canDo(){if(!S.db){toast('O banco não está disponível nesta visualização.');return false}if(S.canWrite===false){toast('Seu acesso é só de leitura.');return false}return true}
+function needMe(cb){if(S.me)return true;S.pending=cb;openIdentity();return false}
+async function logHistory(e){
+  try{await S.db.collection('history').add({ts:new Date().toISOString(),who:S.me.name,relation:S.me.relation,action:e.action,groupId:e.groupId||'',groupName:e.groupName||'',details:e.details||[],note:'Identidade autodeclarada, não verificada.'})}
+  catch(err){toast('Alteração salva, mas o histórico falhou. Avise o Sidney.')}}
+function writeFail(err){if(err&&err.code==='invalid_argument'){S.canWrite=false;renderAll();toast('Seu acesso é só de leitura. Peça permissão de edição ao Sidney.')}else toast('Não foi possível salvar. Tente de novo.')}
+async function commitGroup(id,baseVersion,next,action){
+  var ref=S.db.doc('groups/'+id),snap=await ref.get(),cur=snap.exists?snap.data():null;
+  if(baseVersion!=null&&!cur)return {gone:true};
+  if(cur&&baseVersion!=null&&cur.version!==baseVersion)return {conflict:cur};
+  var now=new Date().toISOString(),doc=Object.assign({},cur||{archived:false,reviewNotes:[],createdAt:now,createdBy:S.me.name},next,{id:id,version:(cur?cur.version:0)+1,updatedAt:now,updatedBy:S.me.name,updatedRel:S.me.relation});
+  await ref.set(doc);
+  var det=next.archived!==undefined&&cur&&next.archived!==cur.archived?[{campo:'Situação',de:cur.archived?'Na lixeira':'Na lista',para:next.archived?'Na lixeira':'Na lista'}]:diff(cur,doc);
+  await logHistory({action:action,groupId:id,groupName:doc.name,details:det});
+  return {ok:doc}}
+async function runCommit(id,base,next,action,okMsg){
+  if(!canDo()||!needMe(function(){runCommit(id,base,next,action,okMsg)}))return;
+  try{var r=await commitGroup(id,base,next,action);
+    if(r.ok){closeModal();toast(okMsg);return r}
+    openConflict(id,next,action,okMsg,r)}catch(err){writeFail(err)}}
+
+/* ---------- renderização ---------- */
+function renderHeader(){
+  var d=EVENT.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}),n=new Date(),days=Math.round((EVENT-new Date(n.getFullYear(),n.getMonth(),n.getDate()))/864e5);
+  $('#eventLine').textContent=days>0?'Faltam '+days+' dias para o grande dia':days===0?'O grande dia é hoje':'';
+  var u=S.config.confirmUrl,h='';
+  if(u&&/^https?:\/\//i.test(u))h='<a class="btn" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">Site de confirmação dos convidados</a>';
+  else h='<button class="btn" type="button" data-go="ajustes">Definir link de confirmação</button>';
+  $('#hActions').innerHTML=h;
+  $('#meLine').innerHTML=S.me?'Você entrou como <b>'+esc(S.me.name)+'</b> · '+esc(S.me.relation)+' <span>(autodeclarado, não verificado)</span> <button class="link" type="button" data-act="changeMe">Trocar</button>':'<button class="link" type="button" data-act="changeMe">Informe seu nome para poder editar</button>'}
+function renderBanner(){var m='';
+  if(!S.db)m='O banco de dados não está disponível nesta visualização. Abra o link compartilhado pelo Sidney, com sua conta, para ver e editar a lista.';
+  else if(S.canWrite===false)m='Você está em modo leitura. Para editar, peça ao Sidney acesso de Editor ou Contribuidor a este site.';
+  $('#banner').innerHTML=m?'<div class="banner" role="alert">'+m+'</div>':'';
+  document.body.classList.toggle('ro',!S.db||S.canWrite===false)}
+function renderTabs(){
+  var rv=allReviews().filter(function(x){return !x.done}).length,dp=dupPairs().filter(function(x){return !x.done&&x.level==='alta'}).length,tr=trash().length;
+  var T=[['convidados','Convidados',''],['revisoes','Revisões pendentes',rv],['duplicidades','Duplicidades',dp],['historico','Histórico',''],['lixeira','Lixeira',tr||''],['ajustes','Ajustes','']];
+  $('#tabs').innerHTML=T.map(function(t){return '<button type="button" role="tab" data-tab="'+t[0]+'" aria-selected="'+(S.tab===t[0])+'">'+t[1]+(t[2]!==''?' <span class="badge">'+t[2]+'</span>':'')+'</button>'}).join('');
+  T.forEach(function(t){$('#pane-'+t[0]).hidden=S.tab!==t[0]})}
+function peopleText(g){var a=g.adults,c=g.children;return (a==null?'adultos a confirmar':a+(a===1?' adulto':' adultos'))+' · '+(c==null?'crianças a confirmar':c===0?'sem crianças':c+(c===1?' criança':' crianças'))}
+function renderList(){
+  var L=filtered(),t=totals(L),all=live(),open=dupPairs().filter(function(x){return !x.done&&x.level==='alta'}),dupIds={};
+  open.forEach(function(p){dupIds[p.a.id]=1;dupIds[p.b.id]=1});
+  var tiles=[['Grupos',t.groups,Object.keys(t.byO).map(function(k){return k+' '+t.byO[k]}).join(' · ')||'nenhum grupo',''],['Pessoas',t.people,'contagem já conhecida',''],['Adultos',t.adults,'conhecidos',''],['Crianças e adolescentes',t.children,'conhecidos',''],['Confirmados',t.conf,t.confP+' pessoas','soft'],['Contagem pendente',t.pend,'grupos com adultos ou crianças a confirmar','soft']];
+  $('#tiles').innerHTML=S.loaded.groups?tiles.map(function(x){return '<div class="tile '+x[3]+'"><div class="k">'+x[0]+'</div><div class="v">'+x[1]+'</div><div class="s">'+esc(x[2])+'</div></div>'}).join(''):'';
+  var note=filtersOn()?'Os totais mostram só a seleção filtrada.':'O total final pode ser maior: há grupos com contagem a confirmar.';
+  var b=S.baseline;if(b&&!filtersOn()&&S.loaded.groups){var A=totals(all);if(A.groups!==b.groups||A.people!==b.people)note+=' Desde a importação inicial ('+b.groups+' grupos, '+b.people+' pessoas): '+(A.groups-b.groups>=0?'+':'')+(A.groups-b.groups)+' grupos, '+(A.people-b.people>=0?'+':'')+(A.people-b.people)+' pessoas.';else note+=' Confere com a importação inicial ('+b.groups+' grupos, '+b.people+' pessoas).'}
+  $('#tilesNote').textContent=note;
+  $('#clearF').hidden=!filtersOn();$('#countNote').textContent=S.loaded.groups?L.length+' de '+all.length+' grupos':'';
+  if(!S.loaded.groups){$('#list').innerHTML='<div class="empty">Carregando os convidados…</div>';return}
+  if(!all.length){$('#list').innerHTML='<div class="empty"><h3>Nenhum convidado por aqui</h3><p>Use "Novo grupo" para cadastrar o primeiro.</p></div>';return}
+  if(!L.length){$('#list').innerHTML='<div class="empty">Nenhum grupo corresponde aos filtros.</div>';return}
+  $('#list').innerHTML=L.map(function(g){
+    var rev=reviewsFor(g).filter(function(r){return !S.reviews[g.id+'__'+r.key]}).length,chips='';
+    chips+='<span class="chip '+(g.origin==='Andressa'?'o-a':'o-s')+'">'+esc(g.origin)+'</span>';
+    chips+='<span class="chip'+(g.alcohol==='sim'?' gold':'')+'">'+esc((ALC.filter(function(a){return a[0]===g.alcohol})[0]||['',g.alcohol])[1])+'</span>';
+    if(g.possible)chips+='<span class="chip warn">Possível convidado</span>';
+    if(rev)chips+='<button class="chip warn" type="button" data-go="revisoes" style="border:0;cursor:pointer">'+rev+' a revisar</button>';
+    if(dupIds[g.id])chips+='<button class="chip bad" type="button" data-go="duplicidades" style="border:0;cursor:pointer">Possível duplicidade</button>';
+    return '<article class="gcard" data-id="'+esc(g.id)+'"><div class="gtop"><h3>'+esc(g.name)+'</h3></div><div class="chips">'+chips+'</div>'
+      +(g.companions?'<p class="comp">com '+esc(g.companions)+'</p>':'')+'<p class="count">'+peopleText(g)+'</p>'
+      +(g.ages?'<p class="comp">Idades: '+esc(g.ages)+'</p>':'')+(g.notes?'<p class="gnotes">'+esc(g.notes)+'</p>':'')
+      +'<div class="gact"><select class="stsel needw st-'+slugSt(g.status)+'" data-id="'+esc(g.id)+'" aria-label="Status de '+esc(g.name)+'">'+STATUS.map(function(s){return '<option value="'+s[0]+'"'+(s[0]===g.status?' selected':'')+'>'+s[1]+'</option>'}).join('')+'</select>'
+      +'<span class="chip st-'+slugSt(g.status)+'" aria-hidden="true" style="display:none">'+esc(labelSt(g.status))+'</span>'
+      +'<button class="btn sm needw" type="button" data-act="edit" data-id="'+esc(g.id)+'">Editar</button><button class="btn sm danger needw" type="button" data-act="del" data-id="'+esc(g.id)+'">Excluir</button></div></article>'}).join('')}
+function renderReviews(){
+  var R=allReviews(),open=R.filter(function(x){return !x.done}),done=R.filter(function(x){return x.done}),h='<p class="note">Aqui ficam as inconsistências encontradas. Nada é corrigido sozinho: vocês decidem se editam o grupo ou marcam como revisado.</p>';
+  if(!S.loaded.groups){$('#pane-revisoes').innerHTML='<div class="empty">Carregando…</div>';return}
+  if(!open.length)h+='<div class="empty">Nenhuma revisão pendente.</div>';
+  var by={};open.forEach(function(x){(by[x.g.id]=by[x.g.id]||[]).push(x)});
+  Object.keys(by).sort(function(a,b){return byId(a).name.localeCompare(byId(b).name,'pt-BR')}).forEach(function(id){var g=byId(id);
+    h+='<div class="panel"><h3>'+esc(g.name)+' <span class="chip '+(g.origin==='Andressa'?'o-a':'o-s')+'">'+esc(g.origin)+'</span></h3>'+by[id].map(function(x){return '<div class="rv-item"><span class="t">'+esc(x.text)+'</span><span><button class="btn sm needw" type="button" data-act="rvdone" data-k="'+esc(x.gk)+'">Marcar como revisado</button></span></div>'}).join('')+'<div style="margin-top:8px"><button class="btn sm needw" type="button" data-act="edit" data-id="'+esc(id)+'">Editar grupo</button></div></div>'});
+  if(done.length)h+='<details class="panel"><summary>Revisões já tratadas ('+done.length+')</summary>'+done.map(function(x){return '<div class="rv-item"><span class="t"><b>'+esc(x.g.name)+'</b>: '+esc(x.text)+' <span class="note">Revisado por '+esc(x.done.who)+' em '+esc(fmtTime(x.done.ts))+'</span></span><button class="btn sm needw" type="button" data-act="rvopen" data-k="'+esc(x.gk)+'">Reabrir</button></div>'}).join('')+'</details>';
+  $('#pane-revisoes').innerHTML=h}
+function miniG(g){return '<div class="mini"><b>'+esc(g.name)+'</b> <span class="chip '+(g.origin==='Andressa'?'o-a':'o-s')+'">'+esc(g.origin)+'</span><br>'+(g.companions?'com '+esc(g.companions)+'<br>':'')+esc(peopleText(g))+'<br><button class="btn sm needw" type="button" data-act="edit" data-id="'+esc(g.id)+'" style="margin-top:6px">Abrir grupo</button></div>'}
+function renderDups(){
+  if(!S.loaded.groups){$('#pane-duplicidades').innerHTML='<div class="empty">Carregando…</div>';return}
+  var P=dupPairs(),strong=P.filter(function(x){return !x.done&&x.level==='alta'}),weak=P.filter(function(x){return !x.done&&x.level==='baixa'}),done=P.filter(function(x){return x.done});
+  var card=function(p){return '<div class="panel"><div class="note" style="margin:0">Nomes em comum: <b>'+esc(p.toks.join(', '))+'</b> · confiança '+p.level+'</div><div class="pair">'+miniG(p.a)+miniG(p.b)+'</div><button class="btn sm needw" type="button" data-act="notdup" data-k="'+esc(p.key)+'">Não é duplicidade</button></div>'};
+  var h='<p class="note">São só sugestões por semelhança de nomes. Nada é unido nem excluído automaticamente. Para juntar dois grupos, editem um e excluam o outro.</p>';
+  h+=strong.length?strong.map(card).join(''):'<div class="empty">Nenhuma sugestão de duplicidade provável.</div>';
+  if(weak.length){h+='<p style="margin-top:14px"><button class="btn sm" type="button" data-act="weak">'+(S.showWeak?'Ocultar':'Mostrar')+' '+weak.length+' sugestões mais fracas (só o primeiro nome ou sobrenome bate)</button></p>';if(S.showWeak)h+=weak.map(card).join('')}
+  if(done.length)h+='<details class="panel" style="margin-top:12px"><summary>Descartadas como "não é duplicidade" ('+done.length+')</summary>'+done.map(function(p){return '<div class="rv-item"><span class="t">'+esc(p.a.name)+' e '+esc(p.b.name)+' <span class="note">por '+esc(p.done.who)+' em '+esc(fmtTime(p.done.ts))+'</span></span><button class="btn sm needw" type="button" data-act="dupopen" data-k="'+esc(p.key)+'">Voltar a sugerir</button></div>'}).join('')+'</details>';
+  $('#pane-duplicidades').innerHTML=h}
+function renderHistory(){
+  if(!S.loaded.history){$('#pane-historico').innerHTML='<div class="empty">Carregando…</div>';return}
+  var h='<p class="note">Registro permanente de tudo que foi feito: cada linha mostra quem fez, a relação que a pessoa declarou, quando e o que mudou. A identificação é autodeclarada. As linhas não podem ser editadas nem apagadas por aqui.</p>';
+  if(!S.history.length)h+='<div class="empty">Ainda não há alterações registradas.</div>';
+  else h+='<ul class="hist">'+S.history.map(function(e){return '<li><div class="hh"><time>'+esc(fmtTime(e.ts))+'</time><b>'+esc(e.who)+'</b><span>('+esc(e.relation)+', autodeclarado)</span><span class="chip">'+esc(e.action)+'</span>'+(e.groupName?'<span>Grupo: <b>'+esc(e.groupName)+'</b></span>':'')+'</div>'+((e.details&&e.details.length)?'<ul>'+e.details.map(function(d){return '<li>'+esc(d.campo)+': '+(d.de!==''&&d.de!=null?esc(d.de)+' → ':'')+esc(d.para)+'</li>'}).join('')+'</ul>':'')+'</li>'}).join('')+'</ul>'+(S.history.length>=300?'<p class="note">Mostrando as 300 alterações mais recentes.</p>':'');
+  $('#pane-historico').innerHTML=h}
+function renderTrash(){
+  if(!S.loaded.groups){$('#pane-lixeira').innerHTML='<div class="empty">Carregando…</div>';return}
+  var T=trash().sort(function(a,b){return a.name.localeCompare(b.name,'pt-BR')});
+  var h='<p class="note">Grupos excluídos ficam aqui. Dá para restaurar ou excluir de vez. Fora da lixeira, os totais não contam esses grupos.</p>';
+  h+=T.length?'<div class="grid">'+T.map(function(g){return '<article class="gcard"><h3>'+esc(g.name)+'</h3><p class="comp">'+(g.companions?'com '+esc(g.companions)+' · ':'')+esc(peopleText(g))+'</p><p class="comp">Excluído por '+esc(g.updatedBy)+' em '+esc(fmtTime(g.updatedAt))+'</p><div class="gact"><button class="btn sm needw" type="button" data-act="restore" data-id="'+esc(g.id)+'">Restaurar</button><button class="btn sm danger needw" type="button" data-act="purge" data-id="'+esc(g.id)+'">Excluir definitivamente</button></div></article>'}).join('')+'</div>':'<div class="empty">A lixeira está vazia.</div>';
+  $('#pane-lixeira').innerHTML=h}
+function renderSettings(){
+  $('#pane-ajustes').innerHTML='<div class="panel"><h3>Link do site de confirmação</h3><p class="note" style="margin-top:0">Fica vazio até você colar o endereço. Aparece como botão no topo da página.</p><label class="f" for="cfgUrl">Endereço (começa com https://)</label><div class="numrow"><input type="url" id="cfgUrl" style="flex:1 1 260px;width:auto" value="'+esc(S.config.confirmUrl||'')+'" placeholder="https://"><button class="btn primary needw" type="button" data-act="saveUrl">Salvar link</button></div></div>'
+  +'<div class="panel"><h3>Lembretes do evento</h3><p class="note" style="margin-top:0">Anotações em comum de Andressa e Sidney, para não esquecer na hora das compras e da organização.</p><label class="f" for="cfgRem">Lembretes</label><textarea id="cfgRem" rows="5">'+esc(S.config.reminders||'')+'</textarea><div style="margin-top:8px"><button class="btn primary needw" type="button" data-act="saveRem">Salvar lembretes</button></div></div>'
+  +'<div class="panel"><h3>Como funciona o acesso</h3><p style="margin:0 0 6px">Quem tem permissão de edição neste site vê e altera a lista. Cada pessoa informa nome e relação ao entrar, e isso é autodeclarado: o site não confirma quem é quem. Tudo que alguém faz fica no Histórico.</p><p style="margin:0">Exclusão: o grupo vai para a Lixeira e pode ser restaurado. Só "Excluir definitivamente" apaga de vez, e esse ato também fica registrado.</p></div>'
+  +'<div class="panel"><h3>Sua identificação</h3><p style="margin:0 0 8px">'+(S.me?esc(S.me.name)+' · '+esc(S.me.relation):'Ainda não informada')+'</p><button class="btn" type="button" data-act="changeMe">Alterar nome e relação</button></div>'}
+function renderAll(){renderHeader();renderBanner();renderTabs();renderList();renderReviews();renderDups();renderHistory();renderTrash();if(S.tab!=='ajustes'||!document.activeElement||['cfgUrl','cfgRem'].indexOf(document.activeElement.id)<0)renderSettings()}
+
+/* ---------- modais ---------- */
+function openModal(html){$('#modalBody').innerHTML=html;$('#overlay').hidden=false;var f=$('#modalBody').querySelector('input:not([type=checkbox]),select,button');if(f)f.focus()}
+function closeModal(){$('#overlay').hidden=true;$('#modalBody').innerHTML='';S.form=null}
+function openIdentity(){
+  var cur=S.me||{name:'',relation:''},isCustom=cur.relation&&RELS.indexOf(cur.relation)<0;
+  openModal('<h2>Quem está acessando?</h2><p class="note" style="margin-top:0">Informe seu nome e sua relação com a família. Isso aparece no histórico das alterações. É autodeclarado: o site não verifica a identidade.</p><form id="idForm"><label class="f" for="idName">Seu nome</label><input type="text" id="idName" maxlength="60" value="'+esc(cur.name)+'" required autocomplete="name"><div style="height:10px"></div><label class="f" for="idRel">Relação com a família</label><select id="idRel"><option value=""'+(cur.relation?'':' selected')+'>Escolha…</option>'+RELS.map(function(r){return '<option'+(cur.relation===r?' selected':'')+'>'+esc(r)+'</option>'}).join('')+'</select><div id="idCustomWrap" style="margin-top:8px"'+(isCustom?'':' hidden')+'><label class="f" for="idCustom">Qual relação?</label><input type="text" id="idCustom" maxlength="40" value="'+(isCustom?esc(cur.relation):'')+'"></div><div class="err" id="idErr" role="alert"></div><div class="dact">'+(S.me?'<button class="btn" type="button" data-m="close">Cancelar</button>':'')+'<button class="btn primary" type="submit">Continuar</button></div></form>')}
+function formHtml(g){g=g||{name:'',origin:'Andressa',companions:'',adults:1,children:0,ages:'',alcohol:'a confirmar',status:'a convidar',notes:'',possible:false};
+  var num=function(id,v){return '<div class="numrow"><input type="number" id="'+id+'" min="0" max="40" inputmode="numeric" value="'+(v==null?'':v)+'"'+(v==null?' disabled':'')+'><label class="chk"><input type="checkbox" id="'+id+'Tbd"'+(v==null?' checked':'')+'> a confirmar</label></div>'};
+  return '<h2>'+(S.form&&S.form.id?'Editar grupo':'Novo grupo')+'</h2><form id="gForm"><div class="fgrid">'
+  +'<div class="full"><label class="f" for="fName">Nome do grupo</label><input type="text" id="fName" maxlength="80" required value="'+esc(g.name)+'"></div>'
+  +'<div><label class="f" for="fOrigin">Origem</label><select id="fOrigin"><option'+(g.origin==='Andressa'?' selected':'')+'>Andressa</option><option'+(g.origin==='Sidney Jr.'?' selected':'')+'>Sidney Jr.</option></select></div>'
+  +'<div><label class="f" for="fStatus">Status</label><select id="fStatus">'+STATUS.map(function(s){return '<option value="'+s[0]+'"'+(s[0]===g.status?' selected':'')+'>'+s[1]+'</option>'}).join('')+'</select></div>'
+  +'<div class="full"><label class="f" for="fComp">Acompanhantes</label><input type="text" id="fComp" maxlength="160" value="'+esc(g.companions)+'" placeholder="Ex.: esposa e filho"></div>'
+  +'<div><label class="f" for="fAdults">Adultos</label>'+num('fAdults',g.adults)+'</div><div><label class="f" for="fChildren">Crianças/adolescentes</label>'+num('fChildren',g.children)+'</div>'
+  +'<div class="full"><label class="f" for="fAges">Idades aproximadas</label><input type="text" id="fAges" maxlength="160" value="'+esc(g.ages)+'" placeholder="Ex.: Sophia, 8 anos"></div>'
+  +'<div><label class="f" for="fAlc">Consumo de álcool</label><select id="fAlc">'+ALC.map(function(a){return '<option value="'+a[0]+'"'+(a[0]===g.alcohol?' selected':'')+'>'+a[1]+'</option>'}).join('')+'</select></div>'
+  +'<div style="align-self:end"><label class="chk"><input type="checkbox" id="fPoss"'+(g.possible?' checked':'')+'> Possível convidado</label></div>'
+  +'<div class="full"><label class="f" for="fNotes">Observações</label><textarea id="fNotes" maxlength="500">'+esc(g.notes)+'</textarea></div></div><div class="err" id="fErr" role="alert"></div>'
+  +'<div class="dact"><button class="btn" type="button" data-m="close">Cancelar</button><button class="btn primary" type="submit">Salvar</button></div></form>'}
+function openForm(id){if(!canDo())return;var g=id?byId(id):null;S.form={id:id||null,base:g?g.version:null};openModal(formHtml(g))}
+function readForm(){var n=$('#fName').value.trim();if(!n){$('#fErr').textContent='Informe o nome do grupo.';return null}
+  var rd=function(id){if($('#'+id+'Tbd').checked)return null;var v=$('#'+id).value;if(v==='')return 0;var x=parseInt(v,10);return isNaN(x)||x<0?0:x};
+  return {name:n,origin:$('#fOrigin').value,companions:$('#fComp').value.trim(),adults:rd('fAdults'),children:rd('fChildren'),ages:$('#fAges').value.trim(),alcohol:$('#fAlc').value,status:$('#fStatus').value,possible:$('#fPoss').checked,notes:$('#fNotes').value.trim()}}
+function openConflict(id,mine,action,okMsg,res){
+  if(res&&res.gone){openModal('<h2>Grupo não encontrado</h2><p>Outra pessoa excluiu este grupo definitivamente enquanto você editava. Nada foi salvo.</p><div class="dact"><button class="btn primary" type="button" data-m="close">Entendi</button></div>');return}
+  var cur=res.conflict;S.conflict={id:id,mine:mine,action:action,okMsg:okMsg,cur:cur};
+  var rows=FIELDS.filter(function(f){return mine[f[0]]!==undefined&&mine[f[0]]!==cur[f[0]]}).map(function(f){return '<tr><td>'+f[1]+'</td><td>'+esc(fmt(cur[f[0]]))+'</td><td>'+esc(fmt(mine[f[0]]))+'</td></tr>'}).join('');
+  openModal('<h2>Este grupo mudou</h2><p><b>'+esc(cur.updatedBy)+'</b> ('+esc(cur.updatedRel)+', autodeclarado) alterou <b>'+esc(cur.name)+'</b> em '+esc(fmtTime(cur.updatedAt))+', enquanto você editava. Nada foi sobrescrito.</p>'+(rows?'<div style="overflow-x:auto"><table class="dif"><thead><tr><th>Campo</th><th>Versão atual</th><th>Sua versão</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<p class="note">Suas alterações coincidem com a versão atual.</p>')+'<div class="dact"><button class="btn" type="button" data-m="reload">Recarregar a versão atual</button><button class="btn primary" type="button" data-m="apply">Aplicar minhas alterações sobre a atual</button></div>')}
+
+/* ---------- ações ---------- */
+async function doSaveForm(){
+  var d=readForm();if(!d)return;
+  if(S.form.id){await runCommit(S.form.id,S.form.base,d,'Edição','Grupo salvo.')}
+  else{var id='g-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);d.archived=false;d.reviewNotes=[];await runCommit(id,null,d,'Cadastro','Grupo cadastrado.')}}
+function openDelete(id){var g=byId(id);if(!g||!canDo())return;openModal('<h2>Excluir este grupo?</h2><p><b>'+esc(g.name)+'</b>'+(g.companions?' (com '+esc(g.companions)+')':'')+' sai da lista e dos totais. Ele vai para a Lixeira e pode ser restaurado.</p><div class="dact"><button class="btn" type="button" data-m="close">Cancelar</button><button class="btn danger" type="button" data-m="del" data-id="'+esc(id)+'">Excluir grupo</button></div>')}
+function openPurge(id){var g=byId(id);if(!g||!canDo())return;openModal('<h2>Excluir definitivamente?</h2><p><b>'+esc(g.name)+'</b> será apagado de vez e não poderá ser restaurado. O histórico guarda o registro do que foi apagado.</p><div class="dact"><button class="btn" type="button" data-m="close">Cancelar</button><button class="btn danger" type="button" data-m="purge" data-id="'+esc(id)+'">Excluir definitivamente</button></div>')}
+async function doPurge(id){var g=byId(id);if(!g||!canDo()||!needMe(function(){doPurge(id)}))return;
+  try{await S.db.doc('groups/'+id).delete();await logHistory({action:'Exclusão definitiva',groupId:id,groupName:g.name,details:[{campo:'Dados apagados',de:'',para:g.name+(g.companions?' com '+g.companions:'')+' · '+peopleText(g)+' · origem '+g.origin}]});closeModal();toast('Grupo excluído definitivamente.')}catch(e){writeFail(e)}}
+async function markReview(k,on){if(!canDo()||!needMe(function(){markReview(k,on)}))return;var gid=k.split('__')[0],g=byId(gid),r=allReviews().filter(function(x){return x.gk===k})[0];
+  try{var ref=S.db.doc('reviews/'+k);if(on)await ref.set({resolved:true,who:S.me.name,relation:S.me.relation,ts:new Date().toISOString(),groupId:gid});else await ref.delete();
+    await logHistory({action:on?'Revisão marcada como tratada':'Revisão reaberta',groupId:gid,groupName:g?g.name:'',details:[{campo:'Revisão',de:'',para:r?r.text:k}]})}catch(e){writeFail(e)}}
+async function markDup(k,on){if(!canDo()||!needMe(function(){markDup(k,on)}))return;var p=dupPairs().filter(function(x){return x.key===k})[0];
+  try{var ref=S.db.doc('dups/'+k);if(on)await ref.set({resolved:true,who:S.me.name,relation:S.me.relation,ts:new Date().toISOString()});else await ref.delete();
+    await logHistory({action:on?'Marcado como não é duplicidade':'Duplicidade voltou a ser sugerida',groupId:'',groupName:p?p.a.name+' e '+p.b.name:'',details:[]})}catch(e){writeFail(e)}}
+async function saveUrl(){var v=($('#cfgUrl').value||'').trim();if(v){try{var u=new URL(v);if(!/^https?:$/.test(u.protocol))throw 0}catch(e){toast('Cole um endereço que comece com https://');return}}
+  if(!canDo()||!needMe(saveUrl))return;try{var old=S.config.confirmUrl||'';await S.db.doc('meta/config').set({confirmUrl:v,reminders:S.config.reminders||''});await logHistory({action:'Link de confirmação alterado',details:[{campo:'Link',de:old||'(vazio)',para:v||'(vazio)'}]});toast('Link salvo.')}catch(e){writeFail(e)}}
+async function saveRem(){var v=($('#cfgRem').value||'').trim();
+  if(!canDo()||!needMe(saveRem))return;try{var old=S.config.reminders||'';await S.db.doc('meta/config').set({confirmUrl:S.config.confirmUrl||'',reminders:v});await logHistory({action:'Lembretes alterados',details:[{campo:'Lembretes',de:old||'(vazio)',para:v||'(vazio)'}]});toast('Lembretes salvos.')}catch(e){writeFail(e)}}
+async function exportCsv(){
+  if(!S.dl){toast('A exportação não está disponível nesta visualização.');return}
+  var q=function(v){v=v==null?'a confirmar':String(v);return '"'+v.replace(/"/g,'""')+'"'},rows=[['Nome','Origem','Acompanhantes','Adultos','Crianças/adolescentes','Idades','Álcool','Status','Possível convidado','Observações']];
+  filtered().forEach(function(g){rows.push([g.name,g.origin,g.companions,g.adults,g.children,g.ages,g.alcohol,g.status,g.possible?'sim':'não',g.notes])});
+  try{await S.dl.save({filename:'convidados-aurora.csv',data:'﻿'+rows.map(function(r){return r.map(q).join(';')}).join('\r\n')});toast('Arquivo salvo.')}catch(e){if(!e||e.code!=='declined')toast('Não foi possível exportar.')}}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click',function(ev){
+  var t=ev.target.closest('[data-tab],[data-go],[data-act],[data-m]');if(!t)return;
+  if(t.dataset.tab){S.tab=t.dataset.tab;renderTabs();return}
+  if(t.dataset.go){S.tab=t.dataset.go;renderTabs();window.scrollTo(0,0);return}
+  var m=t.dataset.m,a=t.dataset.act,id=t.dataset.id,k=t.dataset.k;
+  if(m==='close'){closeModal();return}
+  if(m==='del'){runCommit(id,byId(id).version,{archived:true},'Exclusão (para a lixeira)','Grupo enviado para a Lixeira.');return}
+  if(m==='purge'){doPurge(id);return}
+  if(m==='reload'){var c=S.conflict.cur;S.form={id:S.conflict.id,base:c.version};openModal(formHtml(c));return}
+  if(m==='apply'){var c2=S.conflict;runCommit(c2.id,c2.cur.version,c2.mine,c2.action,c2.okMsg);return}
+  if(a==='changeMe'){S.pending=null;openIdentity()}
+  else if(a==='edit')openForm(id);
+  else if(a==='del')openDelete(id);
+  else if(a==='restore')runCommit(id,byId(id).version,{archived:false},'Restauração','Grupo restaurado.');
+  else if(a==='purge')openPurge(id);
+  else if(a==='rvdone')markReview(k,true);
+  else if(a==='rvopen')markReview(k,false);
+  else if(a==='notdup')markDup(k,true);
+  else if(a==='dupopen')markDup(k,false);
+  else if(a==='weak'){S.showWeak=!S.showWeak;renderDups()}
+  else if(a==='saveUrl')saveUrl();else if(a==='saveRem')saveRem()});
+document.addEventListener('submit',function(ev){ev.preventDefault();
+  if(ev.target.id==='gForm')doSaveForm();
+  else if(ev.target.id==='idForm'){var n=$('#idName').value.trim(),r=$('#idRel').value==='__o'?$('#idCustom').value.trim():$('#idRel').value;
+    if(!n||!r){$('#idErr').textContent='Preencha seu nome e a relação.';return}
+    S.me={name:n,relation:r};saveMe(S.me);closeModal();renderHeader();renderSettings();var p=S.pending;S.pending=null;if(p)p()}});
+document.addEventListener('change',function(ev){var t=ev.target;
+  if(t.id==='idRel'){$('#idCustomWrap').hidden=t.value!=='__o'}
+  else if(t.id==='fAdultsTbd'||t.id==='fChildrenTbd'){var inp=$('#'+t.id.replace('Tbd',''));inp.disabled=t.checked;if(t.checked)inp.value='';else if(inp.value==='')inp.value='0'}
+  else if(t.classList&&t.classList.contains('stsel')){var g=byId(t.dataset.id);if(g&&g.status!==t.value)runCommit(g.id,g.version,{status:t.value},'Edição','Status atualizado.')}
+  else if(t.id==='fo'||t.id==='fs'||t.id==='fa'){S.F={q:S.F.q,origin:$('#fo').value,status:$('#fs').value,alcohol:$('#fa').value};renderList()}});
+$('#q').addEventListener('input',function(){S.F.q=this.value;renderList()});
+$('#clearF').addEventListener('click',function(){S.F={q:'',origin:'',status:'',alcohol:''};$('#q').value='';$('#fo').value='';$('#fs').value='';$('#fa').value='';renderList()});
+$('#addBtn').addEventListener('click',function(){openForm(null)});
+$('#csvBtn').addEventListener('click',exportCsv);
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&!$('#overlay').hidden&&S.me)closeModal()});
+
+/* ---------- inicialização ---------- */
+renderAll();
+if(!S.me)openIdentity();
+(function(){
+  var SB_URL='https://phfciuifxiqurctfxvrl.supabase.co/rest/v1/',SB_KEY='sb_publishable_nZMrUiyrjjwIidIT_9NL0g_qdRwG7wE';
+  function req(path,opt){opt=opt||{};opt.headers=Object.assign({apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'},opt.headers||{});
+    return fetch(SB_URL+path,opt).then(function(r){if(!r.ok)return r.text().then(function(t){var e=new Error(t);e.status=r.status;throw e});return r.status===204?null:r.text().then(function(t){return t?JSON.parse(t):null})})}
+  var watchers=[];function refresh(){watchers.forEach(function(w){w()})}
+  function wrapRow(r){return {id:r.id,data:function(){return r.data}}}
+  function split(p){var i=p.indexOf('/');return [p.slice(0,i),p.slice(i+1)]}
+  var db={
+    collection:function(name){var q={order:'',limit:''};var c={
+      orderBy:function(f,d){q.order='&order='+f+'.'+(d||'asc');return c},
+      limit:function(n){q.limit='&limit='+n;return c},
+      onSnapshot:function(cb,err){var last=null;
+        function pull(){req(name+'?select=*'+q.order+q.limit).then(function(rows){var j=JSON.stringify(rows);if(j===last)return;last=j;cb({docs:rows.map(wrapRow)})}).catch(function(e){if(err)err(e)})}
+        watchers.push(pull);pull();setInterval(pull,6000);document.addEventListener('visibilitychange',function(){if(!document.hidden)pull()})},
+      add:function(obj){var row={id:(window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Date.now())+Math.random().toString(16).slice(2),data:obj};if(name==='history')row.ts=obj.ts;
+        return req(name,{method:'POST',body:JSON.stringify(row),headers:{Prefer:'return=minimal'}}).then(refresh)}};
+      return c},
+    doc:function(path){var p=split(path),t=p[0],id=p[1];return {
+      get:function(){return req(t+'?id=eq.'+encodeURIComponent(id)+'&select=*').then(function(rows){var r=rows[0];return {exists:!!r,data:function(){return r&&r.data}}})},
+      set:function(data){var row={id:id,data:data};if(t==='groups'||t==='meta')row.version=data.version||1;
+        if(t==='groups'&&data.version>1){return req('groups?id=eq.'+encodeURIComponent(id)+'&version=eq.'+(data.version-1),{method:'PATCH',body:JSON.stringify({data:data,version:data.version,updated_at:new Date().toISOString()}),headers:{Prefer:'return=representation'}}).then(function(rows){if(!rows||!rows.length){var e=new Error('conflict');e.code='conflict';throw e}refresh()})}
+        return req(t+'?on_conflict=id',{method:'POST',body:JSON.stringify(row),headers:{Prefer:'resolution=merge-duplicates,return=minimal'}}).then(refresh)},
+      delete:function(){return req(t+'?id=eq.'+encodeURIComponent(id),{method:'DELETE'}).then(refresh)}}}};
+  S.db=db;
+  S.dl={save:function(o){return new Promise(function(res){var b=new Blob([o.data],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=o.filename;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);res({status:'saved'})})}};
+  renderAll();
+  var onErr=function(){renderBanner()};
+  S.db.collection('groups').onSnapshot(function(s){S.groups=s.docs.map(function(d){return Object.assign({},d.data(),{id:d.id})});S.loaded.groups=true;renderAll()},onErr);
+  S.db.collection('history').orderBy('ts','desc').limit(300).onSnapshot(function(s){S.history=s.docs.map(function(d){return d.data()});S.loaded.history=true;renderHistory()},onErr);
+  S.db.collection('reviews').onSnapshot(function(s){var o={};s.docs.forEach(function(d){o[d.id]=d.data()});S.reviews=o;renderAll()},onErr);
+  S.db.collection('dups').onSnapshot(function(s){var o={};s.docs.forEach(function(d){o[d.id]=d.data()});S.dups=o;renderAll()},onErr);
+  S.db.collection('meta').onSnapshot(function(s){s.docs.forEach(function(d){if(d.id==='config')S.config=d.data();if(d.id==='baseline')S.baseline=d.data()});renderAll()},onErr);
+})();
+})();
+</script>
