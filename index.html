@@ -432,7 +432,7 @@ function renderResp(){
   var list=D.ans.filter(function(g){var r=g.rsvp;return F==='todos'||(F==='vao'&&r.vai===true)||(F==='nao'&&r.vai===false)||(F==='alergia'&&hasAl(r))||(F==='recado'&&r.mensagem)});
   var nal=D.ans.filter(function(g){return hasAl(g.rsvp)}).length,nms=D.ans.filter(function(g){return g.rsvp.mensagem}).length;
   h+='<div class="tiles"><div class="tile"><div class="k">Responderam pelo site</div><div class="v">'+D.ans.length+'</div><div class="s">de '+D.L.length+' grupos</div></div>'
-   +'<div class="tile"><div class="k">Vão</div><div class="v">'+D.vao.length+'</div><div class="s">'+pv.n+' pessoas ('+pv.a+' adultos, '+pv.c+' crianças)</div></div>'
+   +'<div class="tile"><div class="k">Vão</div><div class="v">'+D.vao.length+'</div><div class="s">'+pv.n+(pv.n===1?' pessoa':' pessoas')+' ('+pv.a+(pv.a===1?' adulto':' adultos')+', '+pv.c+(pv.c===1?' criança':' crianças')+')</div></div>'
    +'<div class="tile"><div class="k">Não vão</div><div class="v">'+D.nao.length+'</div><div class="s">grupos</div></div>'
    +'<div class="tile soft"><div class="k">Ainda sem resposta</div><div class="v">'+D.pend.length+'</div><div class="s">convidados que não responderam</div></div></div>';
   h+='<p class="note">Respostas enviadas pelos próprios convidados no site. '+(D.manual.length?D.manual.length+' grupo(s) confirmado(s) por vocês, fora do site, não aparecem aqui. ':'')+(D.naoConv.length?D.naoConv.length+' grupo(s) ainda estão como “a convidar”.':'')+'</p>';
