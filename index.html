@@ -72,7 +72,7 @@ nav.tabs button[aria-selected="true"]{color:var(--rose-ink);border-bottom-color:
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:8px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-width:0}
 .tile .k{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.tile .v{font-family:var(--display);font-size:38px;font-weight:700;color:var(--rose-ink);line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .v{font-variant-numeric:lining-nums tabular-nums;font-family:var(--display);font-size:38px;font-weight:700;color:var(--rose-ink);line-height:1.1;font-variant-numeric:tabular-nums}
 .tile .s{font-size:12.5px;color:var(--muted)}
 .tile.soft{background:var(--surface2)}
 .note{font-size:13px;color:var(--muted);margin:6px 0 16px}
@@ -175,6 +175,16 @@ table.dif th,table.dif td{text-align:left;border-bottom:1px solid var(--line);pa
 .empty .bk{display:block;width:150px;height:auto;margin:0 auto 8px}
 @media (max-width:560px){.hero{padding:6px 0 8px}.hero .logo{width:min(340px,86vw)}.hero .corner{width:74px;opacity:.85}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* abas Respostas e Presentes */
+.rfilt{display:flex;flex-wrap:wrap;gap:6px}
+.gcard .al{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:6px 10px;font-size:14px}
+.gcard .ms{font-family:var(--display);font-size:19px;font-style:italic;color:var(--rose-ink);border-left:3px solid var(--rose-soft);padding-left:10px;margin-top:4px!important}
+details.panel summary{cursor:pointer}
+details.panel[open] summary{margin-bottom:8px}
+#pane-presentes .tiles,#pane-respostas .tiles{margin-bottom:10px}
+h1,h2,h3,.rv-item b,.tile .v{font-variant-numeric:lining-nums}
+#pane-presentes .toolbar{margin-top:6px}
 </style>
 
 <div class="rg" aria-hidden="true"></div>
@@ -220,6 +230,8 @@ table.dif th,table.dif td{text-align:left;border-bottom:1px solid var(--line);pa
     <div class="grid" id="list"><div class="empty">Carregando os convidados…</div></div>
   </section>
 
+  <section id="pane-respostas" role="tabpanel" hidden></section>
+  <section id="pane-presentes" role="tabpanel" hidden></section>
   <section id="pane-revisoes" role="tabpanel" hidden></section>
   <section id="pane-duplicidades" role="tabpanel" hidden></section>
   <section id="pane-historico" role="tabpanel" hidden></section>
@@ -248,7 +260,7 @@ var RELS=['Andressa','Sidney','Familiar da Andressa','Familiar do Sidney'];
 var STOP=new Set(['e','da','de','do','das','dos','vo','mais','convidado','convidados','marido','esposa','filha','filho','filhas','filhos','namorado','namorada','nenhum','tia','tio','dona','duas','dois','adulto','informado']);
 var EVENT=new Date(2026,10,8);
 
-var S={db:null,dl:null,canWrite:null,me:loadMe(),groups:[],history:[],reviews:{},dups:{},config:{},baseline:null,loaded:{},tab:'convidados',showWeak:false,form:null,pending:null,F:{q:'',origin:'',status:'',alcohol:''}};
+var S={db:null,dl:null,canWrite:null,me:loadMe(),groups:[],history:[],reviews:{},dups:{},config:{},baseline:null,loaded:{},tab:'convidados',gift:{cat:[],res:[],F:{st:'ativos',mode:'',q:''}},rF:'todos',showWeak:false,form:null,pending:null,F:{q:'',origin:'',status:'',alcohol:''}};
 
 function loadMe(){try{var j=JSON.parse(localStorage.getItem('aurora.me')||'null');if(j&&j.name&&j.relation&&RELS.indexOf(j.relation)>=0)return j}catch(e){}return null}
 function saveMe(m){try{localStorage.setItem('aurora.me',JSON.stringify(m))}catch(e){}}
@@ -325,7 +337,8 @@ function renderBanner(){var m='';
   document.body.classList.toggle('ro',!S.db||S.canWrite===false)}
 function renderTabs(){
   var rv=allReviews().filter(function(x){return !x.done}).length,dp=dupPairs().filter(function(x){return !x.done&&x.level==='alta'}).length,tr=trash().length;
-  var T=[['convidados','Convidados',''],['revisoes','Revisões pendentes',rv],['duplicidades','Duplicidades',dp],['historico','Histórico',''],['lixeira','Lixeira',tr||''],['ajustes','Ajustes','']];
+  var rs=respData().ans.length,pg=giftPending();
+  var T=[['convidados','Convidados',''],['respostas','Respostas',rs||''],['presentes','Presentes',pg||''],['revisoes','Revisões pendentes',rv],['duplicidades','Duplicidades',dp],['historico','Histórico',''],['lixeira','Lixeira',tr||''],['ajustes','Ajustes','']];
   $('#tabs').innerHTML=T.map(function(t){return '<button type="button" role="tab" data-tab="'+t[0]+'" aria-selected="'+(S.tab===t[0])+'">'+t[1]+(t[2]!==''?' <span class="badge">'+t[2]+'</span>':'')+'</button>'}).join('');
   T.forEach(function(t){$('#pane-'+t[0]).hidden=S.tab!==t[0]})}
 function peopleText(g){var a=g.adults,c=g.children;return (a==null?'adultos a confirmar':a+(a===1?' adulto':' adultos'))+' · '+(c==null?'crianças a confirmar':c===0?'sem crianças':c+(c===1?' criança':' crianças'))}
@@ -391,7 +404,98 @@ function renderSettings(){
   +'<div class="panel"><h3>Lembretes do evento</h3><p class="note" style="margin-top:0">Anotações em comum de Andressa e Sidney, para não esquecer na hora das compras e da organização.</p><label class="f" for="cfgRem">Lembretes</label><textarea id="cfgRem" rows="5">'+esc(S.config.reminders||'')+'</textarea><div style="margin-top:8px"><button class="btn primary needw" type="button" data-act="saveRem">Salvar lembretes</button></div></div>'
   +'<div class="panel"><h3>Como funciona o acesso</h3><p style="margin:0 0 6px">Quem tem permissão de edição neste site vê e altera a lista. Cada pessoa informa nome e relação ao entrar, e isso é autodeclarado: o site não confirma quem é quem. Tudo que alguém faz fica no Histórico.</p><p style="margin:0">Exclusão: o grupo vai para a Lixeira e pode ser restaurado. Só "Excluir definitivamente" apaga de vez, e esse ato também fica registrado.</p></div>'
   +'<div class="panel"><h3>Sua identificação</h3><p style="margin:0 0 8px">'+(S.me?esc(S.me.name)+' · '+esc(S.me.relation):'Ainda não informada')+'</p><button class="btn" type="button" data-act="changeMe">Alterar nome e relação</button></div>'}
-function renderAll(){renderHeader();renderBanner();renderTabs();renderList();renderReviews();renderDups();renderHistory();renderTrash();if(S.tab!=='ajustes'||!document.activeElement||['cfgUrl','cfgRem'].indexOf(document.activeElement.id)<0)renderSettings()}
+function renderAll(){renderHeader();renderBanner();renderTabs();renderList();renderResp();renderGifts();renderReviews();renderDups();renderHistory();renderTrash();if(S.tab!=='ajustes'||!document.activeElement||['cfgUrl','cfgRem'].indexOf(document.activeElement.id)<0)renderSettings()}
+
+
+/* ---------- respostas do site ---------- */
+var SITE_URL='https://sidneycj.github.io/aurora/';
+function respData(){var L=live(),has=function(g){return g.rsvp&&g.rsvp.em},ans=L.filter(has).sort(function(a,b){return String(b.rsvp.em).localeCompare(String(a.rsvp.em))});
+  return {L:L,ans:ans,vao:ans.filter(function(g){return g.rsvp.vai===true}),nao:ans.filter(function(g){return g.rsvp.vai===false}),
+    pend:L.filter(function(g){return !has(g)&&(g.status==='convidado'||g.status==='talvez')}).sort(function(a,b){return a.name.localeCompare(b.name,'pt-BR')}),
+    naoConv:L.filter(function(g){return !has(g)&&g.status==='a convidar'}),
+    manual:L.filter(function(g){return !has(g)&&g.status==='confirmado'})}}
+var NOAL=/^(n|nao|nenhum|nenhuma|nada|sem|nao tenho|nao tem|nenhuma alergia|sem alergia|sem alergias|sem restricao|sem restricoes|nenhuma restricao|-+)$/;
+function hasAl(r){var s=norm(r&&r.alergia).replace(/[^a-z0-9 -]/g,'').trim();return !!s&&!NOAL.test(s)}
+function pplOf(list){var a=0,c=0;list.forEach(function(g){a+=g.adults||0;c+=g.children||0});return {a:a,c:c,n:a+c}}
+function lembreteMsg(g){return '🌸 *Oi, '+g.name+'!* 🌸\n\nAqui é a Aurora de novo, direto da barriguinha. Passei só para lembrar de um recadinho: ainda não chegou a resposta para o meu chá 🦋\n\n🗓 *Domingo, 8 de novembro, às 13h*\n📍 Chácara da Lagoa, Itapecerica da Serra/SP\n\n💌 A confirmação é rapidinha e vai até *25 de outubro*:\n'+((S.config&&/^https?:\/\//.test(S.config.confirmUrl||''))?S.config.confirmUrl:SITE_URL)+'\n\nVai ser um prazer conhecer vocês. 🤍\n_Com amor, Aurora_ 🌷'}
+function copyText(s){try{if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(s)}catch(e){}return new Promise(function(res,rej){var ta=document.createElement('textarea');ta.value=s;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')?res():rej()}catch(e){rej(e)}ta.remove()})}
+function respCard(g){var r=g.rsvp,vai=r.vai===true,rows=[];
+  var pe=vai?peopleText(g):'';
+  function row(k,v){if(v)rows.push('<p><b>'+k+':</b> '+esc(v)+'</p>')}
+  row('Quem vem',r.quemVem);row('Acompanhante',r.nomeMais1);row('Crianças',r.nomesCriancas);row('Bebida',r.bebida);
+  var al=r.alergia?'<p class="'+(hasAl(r)?'al':'')+'"><b>Alergia ou restrição:</b> '+esc(r.alergia)+'</p>':'';
+  var ms=r.mensagem?'<p class="ms">“'+esc(r.mensagem)+'”</p>':'';
+  return '<article class="gcard"><div class="gtop"><h3>'+esc(g.name)+'</h3><span class="chip '+(vai?'ok':'bad')+'">'+(vai?'Vai':'Não vai')+'</span></div><div class="chips"><span class="chip '+(g.origin==='Andressa'?'o-a':'o-s')+'">'+esc(g.origin)+'</span>'+(vai?'<span class="chip">'+esc(pe)+'</span>':'')+'<span class="chip">'+esc(fmtTime(r.em))+'</span></div>'+rows.join('')+al+ms+'</article>'}
+function renderResp(){
+  if(!S.loaded.groups){$('#pane-respostas').innerHTML='<div class="empty">Carregando…</div>';return}
+  var D=respData(),pv=pplOf(D.vao),F=S.rF,h='';
+  var list=D.ans.filter(function(g){var r=g.rsvp;return F==='todos'||(F==='vao'&&r.vai===true)||(F==='nao'&&r.vai===false)||(F==='alergia'&&hasAl(r))||(F==='recado'&&r.mensagem)});
+  var nal=D.ans.filter(function(g){return hasAl(g.rsvp)}).length,nms=D.ans.filter(function(g){return g.rsvp.mensagem}).length;
+  h+='<div class="tiles"><div class="tile"><div class="k">Responderam pelo site</div><div class="v">'+D.ans.length+'</div><div class="s">de '+D.L.length+' grupos</div></div>'
+   +'<div class="tile"><div class="k">Vão</div><div class="v">'+D.vao.length+'</div><div class="s">'+pv.n+' pessoas ('+pv.a+' adultos, '+pv.c+' crianças)</div></div>'
+   +'<div class="tile"><div class="k">Não vão</div><div class="v">'+D.nao.length+'</div><div class="s">grupos</div></div>'
+   +'<div class="tile soft"><div class="k">Ainda sem resposta</div><div class="v">'+D.pend.length+'</div><div class="s">convidados que não responderam</div></div></div>';
+  h+='<p class="note">Respostas enviadas pelos próprios convidados no site. '+(D.manual.length?D.manual.length+' grupo(s) confirmado(s) por vocês, fora do site, não aparecem aqui. ':'')+(D.naoConv.length?D.naoConv.length+' grupo(s) ainda estão como “a convidar”.':'')+'</p>';
+  var fb=[['todos','Todas ('+D.ans.length+')'],['vao','Vão ('+D.vao.length+')'],['nao','Não vão ('+D.nao.length+')'],['alergia','Com alergia ('+nal+')'],['recado','Com recado ('+nms+')']];
+  h+='<div class="rfilt" role="group" aria-label="Filtrar respostas">'+fb.map(function(x){return '<button type="button" class="btn sm'+(F===x[0]?' primary':'')+'" data-act="rf" data-k="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>';
+  h+=list.length?'<div class="grid" style="margin-top:12px">'+list.map(respCard).join('')+'</div>':'<div class="empty" style="margin-top:12px">'+(D.ans.length?'Nenhuma resposta nesse filtro.':'Ninguém respondeu pelo site ainda.')+'</div>';
+  h+='<div class="panel" style="margin-top:18px"><h3>Quem ainda não respondeu</h3><p class="note" style="margin-top:0">Só os marcados como “convidado” ou “talvez”. O botão abre o WhatsApp com a mensagem pronta (voz da Aurora). Você escolhe o contato e envia.</p>';
+  if(!D.pend.length)h+='<div class="empty">Todo mundo que foi convidado já respondeu.</div>';
+  else h+=D.pend.map(function(g){return '<div class="rv-item"><span class="t"><b>'+esc(g.name)+'</b> <span class="chip '+(g.origin==='Andressa'?'o-a':'o-s')+'">'+esc(g.origin)+'</span> <span class="chip '+slugSt(g.status).replace(/^/,'st-')+'">'+esc(labelSt(g.status))+'</span><br><span class="comp">'+esc(peopleText(g))+'</span></span><span class="gact" style="margin:0;padding:0"><button class="btn sm" type="button" data-act="wa" data-id="'+esc(g.id)+'">Abrir no WhatsApp</button><button class="btn sm" type="button" data-act="cpmsg" data-id="'+esc(g.id)+'">Copiar mensagem</button></span></div>'}).join('');
+  h+='</div>';
+  $('#pane-respostas').innerHTML=h}
+
+/* ---------- presentes ---------- */
+var STG={reservado:['Vai levar','warn'],pix_feito:['Pix informado','warn'],confirmado:['Recebido','ok'],cancelado:['Cancelado','bad']};
+function brl(v){v=Number(v);return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2})}
+function giftPending(){return S.gift.res.filter(function(r){return r.status==='pix_feito'}).length}
+function itemName(id){var c=S.gift.cat.filter(function(x){return x.id===id})[0];if(!c)return id;var d=c.data||{};return d.nome||d.rotulo||id}
+function giftRows(){var G=S.gift,F=G.F,q=norm(F.q);return G.res.filter(function(r){if(F.st==='ativos'&&r.status==='cancelado')return false;if(F.st&&F.st!=='ativos'&&F.st!=='todos'&&r.status!==F.st)return false;if(F.mode&&r.mode!==F.mode)return false;if(q&&norm(r.guest_name+' '+itemName(r.item_id)).indexOf(q)<0)return false;return true})}
+function giftRowHtml(r){var s=STG[r.status]||[r.status,''],pix=r.mode==='pix',act='';
+  if(r.status==='pix_feito')act='<button class="btn sm primary" type="button" data-act="gs" data-id="'+r.id+'" data-k="confirmado">Confirmar recebido</button>';
+  else if(r.status==='reservado')act='<button class="btn sm primary" type="button" data-act="gs" data-id="'+r.id+'" data-k="confirmado">Marcar como entregue</button>';
+  else if(r.status==='confirmado')act='<button class="btn sm" type="button" data-act="gs" data-id="'+r.id+'" data-k="'+(pix?'pix_feito':'reservado')+'">Desfazer</button>';
+  else act='<button class="btn sm" type="button" data-act="gs" data-id="'+r.id+'" data-k="'+(pix?'pix_feito':'reservado')+'">Reativar</button>';
+  if(r.status!=='cancelado')act+='<button class="btn sm danger" type="button" data-act="gs" data-id="'+r.id+'" data-k="cancelado">Cancelar</button>';
+  return '<div class="rv-item"><span class="t"><b>'+esc(r.guest_name)+'</b> · '+esc(itemName(r.item_id))+'<br><span class="chips" style="margin-top:4px"><span class="chip '+s[1]+'">'+s[0]+'</span><span class="chip '+(pix?'gold':'')+'">'+(pix?'Pix '+brl(r.amount):'Levar '+r.qty+(r.qty>1?' unidades':' unidade'))+'</span><span class="chip">'+esc(fmtTime(r.created_at))+'</span></span></span><span class="gact" style="margin:0;padding:0">'+act+'</span></div>'}
+function renderGiftList(){var el=$('#gList');if(!el)return;var rows=giftRows();el.innerHTML=rows.length?rows.map(giftRowHtml).join(''):'<div class="empty">Nenhuma reserva nesse filtro.</div>';var c=$('#gCount');if(c)c.textContent=rows.length+' de '+S.gift.res.length+' registros'}
+function renderGifts(){
+  var el=$('#pane-presentes');
+  if(!S.loaded.gifts){el.innerHTML='<div class="empty">Carregando…</div>';return}
+  var G=S.gift,act=G.res.filter(function(r){return r.status!=='cancelado'});
+  var lev=act.filter(function(r){return r.mode==='levar'}),pix=act.filter(function(r){return r.mode==='pix'});
+  var sum=function(l){return l.reduce(function(a,r){return a+Number(r.amount||0)},0)};
+  var pixInf=pix.filter(function(r){return r.status==='pix_feito'}),pixOk=pix.filter(function(r){return r.status==='confirmado'});
+  var nl=lev.reduce(function(a,r){return a+r.qty},0);
+  var h='<div class="tiles"><div class="tile"><div class="k">Itens para levar</div><div class="v">'+nl+'</div><div class="s">'+lev.length+' reserva(s)</div></div>'
+   +'<div class="tile soft"><div class="k">Pix a conferir</div><div class="v">'+pixInf.length+'</div><div class="s">'+brl(sum(pixInf))+' informados</div></div>'
+   +'<div class="tile"><div class="k">Pix confirmados</div><div class="v">'+pixOk.length+'</div><div class="s">'+brl(sum(pixOk))+' recebidos</div></div>'
+   +'<div class="tile"><div class="k">Total de Pix</div><div class="v" style="font-size:30px">'+brl(sum(pix))+'</div><div class="s">informados + confirmados</div></div></div>';
+  h+='<p class="note">“Pix informado” é o que o convidado disse que pagou. Confira no extrato do Nubank e toque em “Confirmar recebido”. Os valores de Pix são os que o próprio convidado digitou.</p>';
+  h+='<div class="toolbar" style="grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr))"><div class="search"><label class="f" for="gq">Buscar por convidado ou item</label><input type="search" id="gq" autocomplete="off" value="'+esc(G.F.q)+'"></div>'
+   +'<div><label class="f" for="gst">Situação</label><select id="gst">'+[['ativos','Ativas (sem canceladas)'],['todos','Todas'],['pix_feito','Pix informado'],['reservado','Vai levar'],['confirmado','Recebido'],['cancelado','Canceladas']].map(function(o){return '<option value="'+o[0]+'"'+(G.F.st===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'
+   +'<div><label class="f" for="gmo">Tipo</label><select id="gmo">'+[['','Todos'],['levar','Levar'],['pix','Pix']].map(function(o){return '<option value="'+o[0]+'"'+(G.F.mode===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></div>'
+   +'<div class="row2"><button class="btn" type="button" data-act="gcsv">Exportar CSV</button><span class="note" id="gCount" style="margin:0"></span></div></div>';
+  h+='<div class="panel"><div id="gList"></div></div>';
+  // visão por item
+  var by={};G.res.forEach(function(r){if(r.status==='cancelado')return;var o=by[r.item_id]=by[r.item_id]||{q:0,v:0,n:0};o.q+=r.qty;o.n++;o.v+=Number(r.amount||0)});
+  var pres=G.cat.filter(function(c){return c.kind==='presente'}),cot=G.cat.filter(function(c){return c.kind==='cota'});
+  h+='<details class="panel"><summary><b>Visão por item</b> (quanto falta de cada presente)</summary><table class="dif"><tr><th>Item</th><th>Total</th><th>Reservado</th><th>Faltam</th><th>Na lista</th></tr>'+pres.map(function(c){var d=c.data||{},tot=d.qtd||1,o=by[c.id]||{q:0};return '<tr><td>'+esc(d.nome)+(d.oculto?' <span class="chip warn">oculto</span>':'')+'</td><td>'+tot+'</td><td>'+o.q+'</td><td>'+Math.max(0,tot-o.q)+'</td><td><button class="btn sm" type="button" data-act="ghide" data-id="'+esc(c.id)+'">'+(d.oculto?'Mostrar':'Ocultar')+'</button></td></tr>'}).join('')+'</table><p class="note">“Ocultar” tira o item da página dos convidados. Reservas já feitas continuam valendo.</p></details>';
+  h+='<details class="panel"><summary><b>Valores aproximados das cotas</b> (o que aparece na seção “Contribua”)</summary>'+cot.map(function(c){var d=c.data||{},o=by[c.id]||{n:0,v:0};return '<div class="rv-item"><span class="t"><b>'+esc(d.nome)+'</b><br><span class="comp">'+(o.n?o.n+' contribuição(ões), '+brl(o.v)+' informados':'Sem contribuições ainda')+'</span></span><span class="gact" style="margin:0;padding:0"><input type="number" min="0" step="10" inputmode="numeric" id="gv-'+esc(c.id)+'" value="'+(d.valor_aproximado==null?'':d.valor_aproximado)+'" placeholder="sem valor" style="width:120px"><button class="btn sm" type="button" data-act="gval" data-id="'+esc(c.id)+'">Salvar</button></span></div>'}).join('')+'<p class="note">Deixe vazio para esconder o valor aproximado daquela cota.</p></details>';
+  var keep=document.activeElement&&document.activeElement.id==='gq';
+  if(keep&&el.contains(document.activeElement)){renderGiftList();return}
+  el.innerHTML=h;renderGiftList()}
+function giftPatch(path,body){return S.req(path,{method:'PATCH',body:JSON.stringify(body),headers:{Prefer:'return=minimal'}}).then(function(){return S.pullGifts()})}
+function giftSetStatus(id,st){var r=S.gift.res.filter(function(x){return x.id===id})[0];if(!r||!canDo())return;
+  giftPatch('gift_reservations?id=eq.'+encodeURIComponent(id),{status:st}).then(function(){toast(st==='confirmado'?'Marcado como recebido.':st==='cancelado'?'Reserva cancelada.':'Situação atualizada.')}).catch(function(){toast('Não foi possível salvar. Tente de novo.')})}
+function giftHide(id){var c=S.gift.cat.filter(function(x){return x.id===id})[0];if(!c||!canDo())return;var d=Object.assign({},c.data);if(d.oculto)delete d.oculto;else d.oculto=true;
+  giftPatch('gift_catalog?id=eq.'+encodeURIComponent(id),{data:d,updated_at:new Date().toISOString()}).then(function(){toast(d.oculto?'Item oculto da lista.':'Item visível de novo.')}).catch(function(){toast('Não foi possível salvar.')})}
+function giftVal(id){var c=S.gift.cat.filter(function(x){return x.id===id})[0],inp=$('#gv-'+id);if(!c||!inp||!canDo())return;var d=Object.assign({},c.data),v=inp.value.trim();
+  if(v===''){d.valor_aproximado=null}else{var n=Number(v);if(!isFinite(n)||n<0||n>1000000){toast('Valor inválido.');return}d.valor_aproximado=n}
+  giftPatch('gift_catalog?id=eq.'+encodeURIComponent(id),{data:d,updated_at:new Date().toISOString()}).then(function(){toast('Valor salvo.')}).catch(function(){toast('Não foi possível salvar.')})}
+function giftCsv(){if(!S.dl)return;var q=function(v){v=v==null?'':String(v);return '"'+v.replace(/"/g,'""')+'"'},rows=[['Data','Convidado','Item','Tipo','Quantidade','Valor Pix','Situação']];
+  giftRows().forEach(function(r){rows.push([fmtTime(r.created_at),r.guest_name,itemName(r.item_id),r.mode,r.qty,r.mode==='pix'?r.amount:'',(STG[r.status]||[r.status])[0]])});
+  S.dl.save({filename:'presentes-aurora.csv',data:'﻿'+rows.map(function(r){return r.map(q).join(';')}).join('\r\n')}).then(function(){toast('Arquivo salvo.')})}
 
 /* ---------- modais ---------- */
 function openModal(html){$('#modalBody').innerHTML=html;$('#overlay').hidden=false;var f=$('#modalBody').querySelector('input:not([type=checkbox]),select,button');if(f)f.focus()}
@@ -469,6 +573,13 @@ document.addEventListener('click',function(ev){
   else if(a==='notdup')markDup(k,true);
   else if(a==='dupopen')markDup(k,false);
   else if(a==='weak'){S.showWeak=!S.showWeak;renderDups()}
+  else if(a==='rf'){S.rF=k;renderResp()}
+  else if(a==='wa'){var wg=byId(id);if(wg)window.open('https://wa.me/?text='+encodeURIComponent(lembreteMsg(wg)),'_blank','noopener')}
+  else if(a==='cpmsg'){var cg=byId(id);if(cg)copyText(lembreteMsg(cg)).then(function(){toast('Mensagem copiada. Cole no WhatsApp.')},function(){toast('Não foi possível copiar.')})}
+  else if(a==='gs')giftSetStatus(id,k);
+  else if(a==='ghide')giftHide(id);
+  else if(a==='gval')giftVal(id);
+  else if(a==='gcsv')giftCsv();
   else if(a==='saveUrl')saveUrl();else if(a==='saveRem')saveRem()});
 document.addEventListener('submit',function(ev){ev.preventDefault();
   if(ev.target.id==='gForm')doSaveForm();
@@ -479,8 +590,10 @@ document.addEventListener('change',function(ev){var t=ev.target;
   if(t.id==='idRel'){$('#idCustomWrap').hidden=t.value!=='__o'}
   else if(t.id==='fAdultsTbd'||t.id==='fChildrenTbd'){var inp=$('#'+t.id.replace('Tbd',''));inp.disabled=t.checked;if(t.checked)inp.value='';else if(inp.value==='')inp.value='0'}
   else if(t.classList&&t.classList.contains('stsel')){var g=byId(t.dataset.id);if(g&&g.status!==t.value)runCommit(g.id,g.version,{status:t.value},'Edição','Status atualizado.')}
+  else if(t.id==='gst'||t.id==='gmo'){S.gift.F.st=$('#gst').value;S.gift.F.mode=$('#gmo').value;renderGiftList()}
   else if(t.id==='fo'||t.id==='fs'||t.id==='fa'){S.F={q:S.F.q,origin:$('#fo').value,status:$('#fs').value,alcohol:$('#fa').value};renderList()}});
 $('#q').addEventListener('input',function(){S.F.q=this.value;renderList()});
+document.addEventListener('input',function(ev){if(ev.target.id==='gq'){S.gift.F.q=ev.target.value;renderGiftList()}});
 $('#clearF').addEventListener('click',function(){S.F={q:'',origin:'',status:'',alcohol:''};$('#q').value='';$('#fo').value='';$('#fs').value='';$('#fa').value='';renderList()});
 $('#addBtn').addEventListener('click',function(){openForm(null)});
 $('#csvBtn').addEventListener('click',exportCsv);
@@ -516,11 +629,13 @@ if(!S.me)openIdentity();
         if(t==='groups'&&data.version>1){return req('groups?id=eq.'+encodeURIComponent(id)+'&version=eq.'+(data.version-1),{method:'PATCH',body:JSON.stringify({data:data,version:data.version,updated_at:new Date().toISOString()}),headers:{Prefer:'return=representation'}}).then(function(rows){if(!rows||!rows.length){var e=new Error('conflict');e.code='conflict';throw e}refresh()})}
         return req(t+'?on_conflict=id',{method:'POST',body:JSON.stringify(row),headers:{Prefer:'resolution=merge-duplicates,return=minimal'}}).then(refresh)},
       delete:function(){return req(t+'?id=eq.'+encodeURIComponent(id),{method:'DELETE'}).then(refresh)}}}};
-  S.db=db;
+  S.db=db;S.req=req;
+  S.pullGifts=function(){return Promise.all([req('gift_catalog?select=id,kind,sort,data&order=sort'),req('gift_reservations?select=*&order=created_at.desc&limit=2000')]).then(function(x){var j=JSON.stringify(x);if(S.gift._last===j&&S.loaded.gifts)return;S.gift._last=j;S.gift.cat=x[0]||[];S.gift.res=x[1]||[];S.loaded.gifts=true;renderTabs();renderGifts()}).catch(function(){})};
   S.dl={save:function(o){return new Promise(function(res){var b=new Blob([o.data],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=o.filename;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500);res({status:'saved'})})}};
   renderAll();
   var onErr=function(){renderBanner()};
   S.db.collection('groups').onSnapshot(function(s){S.groups=s.docs.map(function(d){return Object.assign({},d.data(),{id:d.id})});S.loaded.groups=true;renderAll()},onErr);
+  S.pullGifts();setInterval(S.pullGifts,8000);document.addEventListener('visibilitychange',function(){if(!document.hidden)S.pullGifts()});
   S.db.collection('history').orderBy('ts','desc').limit(300).onSnapshot(function(s){S.history=s.docs.map(function(d){return d.data()});S.loaded.history=true;renderHistory()},onErr);
   S.db.collection('reviews').onSnapshot(function(s){var o={};s.docs.forEach(function(d){o[d.id]=d.data()});S.reviews=o;renderAll()},onErr);
   S.db.collection('dups').onSnapshot(function(s){var o={};s.docs.forEach(function(d){o[d.id]=d.data()});S.dups=o;renderAll()},onErr);
